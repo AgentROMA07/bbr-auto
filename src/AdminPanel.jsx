@@ -31,7 +31,9 @@ const AdminPanel = () => {
   const [dragActive, setDragActive] = useState(false);
   const [previewImages, setPreviewImages] = useState([]);
   const [lang, setLang] = useState(localStorage.getItem('lang') || 'kz');
+  const [settingsLogo, setSettingsLogo] = useState(localStorage.getItem('logo') || null);
   const fileInputRef = useRef(null);
+  const logoInputRef = useRef(null);
   
   const t = translations[lang];
   const isEdit = !!editingCar;
@@ -65,6 +67,23 @@ const AdminPanel = () => {
         reader.readAsDataURL(file);
       }
     });
+  };
+
+  const handleLogoFile = (file) => {
+    if (file && file.type.startsWith('image/')) {
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        setSettingsLogo(e.target.result);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
+  const saveSettings = () => {
+    if (settingsLogo) {
+      localStorage.setItem('logo', settingsLogo);
+    }
+    alert(t.admin.save);
   };
 
   const onDrag = (e) => {
@@ -305,7 +324,34 @@ const AdminPanel = () => {
                   <label className="block text-xs font-bold text-white/30 uppercase tracking-widest mb-3">{t.admin.whatsapp_number}</label>
                   <input type="text" defaultValue="+7 777 777 77 77" className="w-full bg-black border border-white/10 rounded-xl px-4 py-3 focus:border-brand-gold transition-all outline-none" />
                 </div>
-                <button className="bg-brand-gold text-black px-8 py-3 rounded-full font-bold hover:scale-105 transition-all">{t.admin.save}</button>
+                <div>
+                  <label className="block text-xs font-bold text-white/30 uppercase tracking-widest mb-3">Логотип</label>
+                  <div className="grid grid-cols-2 gap-4">
+                    <div className="relative aspect-square rounded-2xl overflow-hidden border border-white/10 bg-black flex items-center justify-center">
+                      {settingsLogo ? (
+                        <img src={settingsLogo} className="w-full h-full object-cover" alt="Logo Preview" />
+                      ) : (
+                        <ImageIcon className="text-white/20" size={32} />
+                      )}
+                    </div>
+                    <button 
+                      type="button"
+                      onClick={() => logoInputRef.current.click()}
+                      className="flex items-center justify-center gap-3 bg-white/5 border border-white/10 rounded-2xl hover:border-brand-gold hover:text-brand-gold transition-all"
+                    >
+                      <Upload size={18} />
+                      Загрузить логотип
+                    </button>
+                    <input 
+                      ref={logoInputRef}
+                      type="file"
+                      accept="image/*"
+                      className="hidden"
+                      onChange={(e) => handleLogoFile(e.target.files[0])}
+                    />
+                  </div>
+                </div>
+                <button onClick={saveSettings} className="bg-brand-gold text-black px-8 py-3 rounded-full font-bold hover:scale-105 transition-all">{t.admin.save}</button>
               </div>
             </div>
           )}

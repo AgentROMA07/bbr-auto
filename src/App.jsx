@@ -287,6 +287,7 @@ function App() {
     const saved = localStorage.getItem('cars');
     return saved ? JSON.parse(saved) : cars;
   });
+  const [logo, setLogo] = useState(localStorage.getItem('logo') || null);
   const t = translations[lang];
 
   const toggleLang = () => {
@@ -317,8 +318,12 @@ function App() {
       <header className="fixed top-0 left-0 w-full z-50 px-4 md:px-6 py-4 md:py-8">
         <div className="max-w-7xl mx-auto flex justify-between items-center glass rounded-full px-4 md:px-8 py-3 md:py-4 border border-brand-gold/10">
           <div className="flex items-center gap-4">
-            <div className="w-8 h-8 md:w-10 md:h-10 bg-black flex items-center justify-center rounded-full border border-brand-gold/30 shadow-[0_0_15px_rgba(197,160,89,0.2)]">
-              <Car size={16} className="text-brand-gold" />
+            <div className="w-8 h-8 md:w-10 md:h-10 bg-black flex items-center justify-center rounded-full border border-brand-gold/30 shadow-[0_0_15px_rgba(197,160,89,0.2)] overflow-hidden">
+              {logo ? (
+                <img src={logo} alt="Logo" className="w-full h-full object-cover" />
+              ) : (
+                <Car size={16} className="text-brand-gold" />
+              )}
             </div>
             <div className="flex flex-col">
               <span className="text-sm md:text-xl font-tech font-bold tracking-tighter text-white leading-tight">BBR<span className="text-brand-gold">.RULIT</span></span>
