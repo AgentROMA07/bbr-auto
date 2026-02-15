@@ -32,6 +32,7 @@ const AdminPanel = () => {
   const [previewImages, setPreviewImages] = useState([]);
   const [lang, setLang] = useState(localStorage.getItem('lang') || 'kz');
   const [settingsLogo, setSettingsLogo] = useState(localStorage.getItem('logo') || null);
+  const [whatsappNumber, setWhatsappNumber] = useState(localStorage.getItem('whatsappNumber') || '+7 707 123 45 67');
   const fileInputRef = useRef(null);
   const logoInputRef = useRef(null);
   
@@ -48,7 +49,7 @@ const AdminPanel = () => {
     localStorage.setItem('lang', newLang);
   };
 
-  const { register, handleSubmit, reset, setValue } = useForm();
+  const { register, handleSubmit, reset } = useForm();
 
   const handleLogout = () => {
     localStorage.removeItem('isAuthenticated');
@@ -83,6 +84,7 @@ const AdminPanel = () => {
     if (settingsLogo) {
       localStorage.setItem('logo', settingsLogo);
     }
+    localStorage.setItem('whatsappNumber', whatsappNumber);
     alert(t.admin.save);
   };
 
@@ -141,9 +143,10 @@ const AdminPanel = () => {
       saveCars(cars.map(c => c.id === editingCar.id ? { ...c, ...carData } : c));
       setEditingCar(null);
     } else {
+      const newId = (cars.length ? Math.max(...cars.map((c) => c.id || 0)) : 0) + 1;
       const newCar = {
         ...carData,
-        id: Date.now(),
+        id: newId,
       };
       saveCars([newCar, ...cars]);
       setIsAddingCar(false);
@@ -322,7 +325,12 @@ const AdminPanel = () => {
                 </div>
                 <div>
                   <label className="block text-xs font-bold text-white/30 uppercase tracking-widest mb-3">{t.admin.whatsapp_number}</label>
-                  <input type="text" defaultValue="+7 777 777 77 77" className="w-full bg-black border border-white/10 rounded-xl px-4 py-3 focus:border-brand-gold transition-all outline-none" />
+                  <input 
+                    type="text" 
+                    value={whatsappNumber} 
+                    onChange={(e) => setWhatsappNumber(e.target.value)} 
+                    className="w-full bg-black border border-white/10 rounded-xl px-4 py-3 focus:border-brand-gold transition-all outline-none" 
+                  />
                 </div>
                 <div>
                   <label className="block text-xs font-bold text-white/30 uppercase tracking-widest mb-3">Логотип</label>

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion as Motion, AnimatePresence } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import { 
   Cpu, 
@@ -35,8 +35,8 @@ const TechBadge = ({ children, variant = 'gold' }) => {
   );
 };
 
-const CarCard = ({ car, lang, t, onShowDetails }) => (
-  <motion.div 
+const CarCard = ({ car, lang, t, onShowDetails, whatsappDigits }) => (
+  <Motion.div 
     initial={{ opacity: 0, y: 30 }}
     whileInView={{ opacity: 1, y: 0 }}
     viewport={{ once: true, margin: "-50px" }}
@@ -89,7 +89,7 @@ const CarCard = ({ car, lang, t, onShowDetails }) => (
             {t.car.more}
           </button>
           <a 
-            href={`https://wa.me/77071234567?text=Здравствуйте! Меня интересует ${car.model}`}
+            href={`https://wa.me/${whatsappDigits}?text=Здравствуйте! Меня интересует ${car.model}`}
             target="_blank"
             rel="noopener noreferrer"
             className="w-14 h-14 flex items-center justify-center rounded-2xl bg-[#25D366] text-white hover:scale-110 hover:shadow-[0_0_20px_rgba(37,211,102,0.4)] transition-all duration-500 shadow-lg"
@@ -99,14 +99,14 @@ const CarCard = ({ car, lang, t, onShowDetails }) => (
         </div>
       </div>
     </div>
-  </motion.div>
+  </Motion.div>
 );
 
-const CarModal = ({ car, lang, t, onClose }) => {
+const CarModal = ({ car, lang, t, onClose, whatsappDigits }) => {
   const [activeImg, setActiveImg] = useState(0);
 
   return (
-    <motion.div 
+    <Motion.div 
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
@@ -114,7 +114,7 @@ const CarModal = ({ car, lang, t, onClose }) => {
     >
       <div className="absolute inset-0 bg-black/90 backdrop-blur-xl" onClick={onClose} />
       
-      <motion.div 
+      <Motion.div 
         initial={{ scale: 0.9, opacity: 0, y: 20 }}
         animate={{ scale: 1, opacity: 1, y: 0 }}
         exit={{ scale: 0.9, opacity: 0, y: 20 }}
@@ -131,7 +131,7 @@ const CarModal = ({ car, lang, t, onClose }) => {
         <div className="h-[300px] sm:h-[400px] lg:h-auto lg:w-2/3 relative bg-black flex flex-col">
           <div className="relative flex-1 overflow-hidden">
             <AnimatePresence mode="wait">
-              <motion.img 
+              <Motion.img 
                 key={activeImg}
                 src={car.gallery[activeImg]} 
                 initial={{ opacity: 0 }}
@@ -268,26 +268,29 @@ const CarModal = ({ car, lang, t, onClose }) => {
           </div>
 
           <a 
-            href={`https://wa.me/77071234567?text=Здравствуйте! Меня интересует ${car.model}`}
+            href={`https://wa.me/${whatsappDigits}?text=Здравствуйте! Меня интересует ${car.model}`}
             target="_blank"
             className="flex items-center justify-center gap-4 bg-[#D4B982] text-[#000000] w-full py-5 md:py-6 font-tech font-bold text-[10px] md:text-xs uppercase tracking-widest hover:bg-white transition-all rounded-full shadow-[0_0_30px_rgba(212,185,130,0.3)] mb-4 lg:mb-0"
           >
             {t.footer.cta_wa} <Zap size={14} md:size={16} fill="black" />
           </a>
         </div>
-      </motion.div>
-    </motion.div>
+      </Motion.div>
+    </Motion.div>
   );
 };
 
 function App() {
   const [lang, setLang] = useState(localStorage.getItem('lang') || 'kz');
   const [selectedCar, setSelectedCar] = useState(null);
-  const [inventory, setInventory] = useState(() => {
+  const [inventory] = useState(() => {
     const saved = localStorage.getItem('cars');
     return saved ? JSON.parse(saved) : cars;
   });
-  const [logo, setLogo] = useState(localStorage.getItem('logo') || null);
+  const [logo] = useState(localStorage.getItem('logo') || null);
+  const [whatsappNumber] = useState(localStorage.getItem('whatsappNumber') || '+7 707 123 45 67');
+  const rawWhatsappDigits = whatsappNumber.replace(/\D/g, '').replace(/^8/, '7');
+  const whatsappDigits = rawWhatsappDigits || '77071234567';
   const t = translations[lang];
 
   const toggleLang = () => {
@@ -311,6 +314,7 @@ function App() {
             car={selectedCar} 
             lang={lang} 
             t={t} 
+            whatsappDigits={whatsappDigits}
             onClose={() => setSelectedCar(null)} 
           />
         )}
@@ -365,7 +369,7 @@ function App() {
               <a href="https://instagram.com/bbr_rulit" target="_blank" className="p-2 glass rounded-full text-white hover:text-brand-gold transition-colors border-white/20 hover:border-brand-gold/50 shadow-lg">
                 <Instagram size={18} />
               </a>
-              <a href="https://wa.me/77071234567" target="_blank" className="p-2 bg-[#D4B982] text-[#000000] rounded-full hover:bg-white transition-colors shadow-[0_0_15px_rgba(212,185,130,0.3)]">
+              <a href={`https://wa.me/${whatsappDigits}`} target="_blank" className="p-2 bg-[#D4B982] text-[#000000] rounded-full hover:bg-white transition-colors shadow-[0_0_15px_rgba(212,185,130,0.3)]">
                 <MessageCircle size={18} fill="black" />
               </a>
             </div>
@@ -410,7 +414,7 @@ function App() {
                 {t.hero.cta} <ArrowUpRight size={16} />
               </a>
               <a 
-                href="https://wa.me/77071234567" 
+                href={`https://wa.me/${whatsappDigits}`} 
                 target="_blank" 
                 rel="noopener noreferrer"
                 className="flex items-center gap-3 glass px-8 py-4 rounded-full border border-white/10 font-tech font-bold text-[10px] md:text-xs uppercase tracking-widest hover:border-brand-gold hover:text-brand-gold transition-all"
@@ -447,7 +451,14 @@ function App() {
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">
           {inventory.map(car => (
-            <CarCard key={car.id} car={car} lang={lang} t={t} onShowDetails={setSelectedCar} />
+            <CarCard 
+              key={car.id} 
+              car={car} 
+              lang={lang} 
+              t={t} 
+              onShowDetails={setSelectedCar} 
+              whatsappDigits={whatsappDigits}
+            />
           ))}
         </div>
       </section>
@@ -466,7 +477,7 @@ function App() {
 
           <div className="grid md:grid-cols-3 gap-8">
             {t.advantages.items.map((item, idx) => (
-              <motion.div
+              <Motion.div
                 key={idx}
                 whileHover={{ y: -10 }}
                 className="glass p-8 md:p-12 rounded-[2rem] border-brand-gold/10 hover:border-brand-gold/30 transition-all group"
@@ -480,7 +491,7 @@ function App() {
                 <p className="text-gray-400 font-tech text-sm leading-relaxed">
                   {item.desc}
                 </p>
-              </motion.div>
+              </Motion.div>
             ))}
           </div>
         </div>
@@ -503,7 +514,7 @@ function App() {
               </p>
               <div className="flex flex-col sm:flex-row justify-center lg:justify-start gap-6">
                 <a 
-                  href="https://wa.me/77071234567" 
+                  href={`https://wa.me/${whatsappDigits}`} 
                   className="w-full sm:w-auto flex items-center justify-center gap-4 bg-[#D4B982] text-[#000000] px-12 py-5 md:py-6 font-tech font-bold text-[10px] md:text-xs uppercase tracking-widest hover:bg-white transition-all rounded-full shadow-[0_0_30px_rgba(212,185,130,0.3)]"
                 >
                   {t.footer.cta_wa} <Zap size={14} md:size={16} fill="black" />
