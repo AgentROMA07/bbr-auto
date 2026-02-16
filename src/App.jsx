@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import { motion as Motion, AnimatePresence } from 'framer-motion';
-import { Link } from 'react-router-dom';
 import { 
   Cpu, 
   Zap, 
@@ -20,8 +19,7 @@ import {
   ChevronLeft,
   ChevronRight,
   MapPin,
-  Percent,
-  User
+  Percent
 } from 'lucide-react';
 import { cars, translations } from './data';
 
@@ -283,28 +281,7 @@ const CarModal = ({ car, lang, t, onClose, whatsappDigits }) => {
 function App() {
   const [lang, setLang] = useState(localStorage.getItem('lang') || 'kz');
   const [selectedCar, setSelectedCar] = useState(null);
-  const [inventory] = useState(() => {
-    const saved = localStorage.getItem('cars');
-    if (!saved) {
-      return cars;
-    }
-    try {
-      const parsed = JSON.parse(saved);
-      if (Array.isArray(parsed)) {
-        const hasRemoteImages = parsed.some(
-          (car) => typeof car.image === 'string' && car.image.startsWith('http'),
-        );
-        if (!hasRemoteImages) {
-          return parsed;
-        }
-      }
-      localStorage.setItem('cars', JSON.stringify(cars));
-      return cars;
-    } catch {
-      localStorage.setItem('cars', JSON.stringify(cars));
-      return cars;
-    }
-  });
+  const [inventory] = useState(cars);
   const [logo] = useState(localStorage.getItem('logo') || null);
   const [whatsappNumber] = useState(localStorage.getItem('whatsappNumber') || '+7 707 123 45 67');
   const rawWhatsappDigits = whatsappNumber.replace(/\D/g, '').replace(/^8/, '7');
@@ -366,12 +343,6 @@ function App() {
                 {item.label}
               </a>
             ))}
-            <Link 
-              to="/admin" 
-              className="p-2 rounded-full hover:bg-brand-gold/10 text-brand-gold/50 hover:text-brand-gold transition-all duration-300"
-            >
-              <User size={18} />
-            </Link>
           </nav>
 
           <div className="flex items-center gap-4">
