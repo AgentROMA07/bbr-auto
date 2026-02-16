@@ -285,7 +285,25 @@ function App() {
   const [selectedCar, setSelectedCar] = useState(null);
   const [inventory] = useState(() => {
     const saved = localStorage.getItem('cars');
-    return saved ? JSON.parse(saved) : cars;
+    if (!saved) {
+      return cars;
+    }
+    try {
+      const parsed = JSON.parse(saved);
+      if (Array.isArray(parsed)) {
+        const hasRemoteImages = parsed.some(
+          (car) => typeof car.image === 'string' && car.image.startsWith('http'),
+        );
+        if (!hasRemoteImages) {
+          return parsed;
+        }
+      }
+      localStorage.setItem('cars', JSON.stringify(cars));
+      return cars;
+    } catch {
+      localStorage.setItem('cars', JSON.stringify(cars));
+      return cars;
+    }
   });
   const [logo] = useState(localStorage.getItem('logo') || null);
   const [whatsappNumber] = useState(localStorage.getItem('whatsappNumber') || '+7 707 123 45 67');
