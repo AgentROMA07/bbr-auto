@@ -1,15 +1,15 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { translations, cars as initialCars } from './data';
-import { 
-  LayoutDashboard, 
-  Car, 
-  Settings, 
-  Plus, 
-  Trash2, 
-  Edit, 
-  Save, 
-  X, 
+import {
+  LayoutDashboard,
+  Car,
+  Settings,
+  Plus,
+  Trash2,
+  Edit,
+  Save,
+  X,
   LogOut,
   Image as ImageIcon,
   DollarSign,
@@ -20,7 +20,7 @@ import {
   Languages
 } from 'lucide-react';
 
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000';
+const API_URL = import.meta.env.VITE_API_URL || '';
 
 const AdminPanel = () => {
   const [activeTab, setActiveTab] = useState('cars');
