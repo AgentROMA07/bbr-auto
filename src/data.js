@@ -337,9 +337,9 @@ export const cars = [
     },
     price: 13200000,
     brand: "Changan",
-    image: "/cars/Changan 75 Plus (1.5).webp",
+    image: "/cars/Changan 75 Plus (2.0).jpg",
     gallery: [
-      "/cars/Changan 75 Plus (1.5).webp"
+      "/cars/Changan 75 Plus (2.0).jpg"
     ]
   },
   {
