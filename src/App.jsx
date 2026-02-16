@@ -560,12 +560,6 @@ function App() {
               {t.footer.status} © 2026 BBR.TECH FUTURE MOBILITY
             </p>
             <div className="flex items-center gap-8">
-              <Link 
-                 to="/login" 
-                 className="text-[10px] text-white/40 uppercase tracking-[0.2em] font-bold hover:text-brand-gold transition-all duration-300"
-               >
-                 Админка
-               </Link>
               <div className="flex gap-10 text-[9px] font-tech uppercase tracking-[0.3em] text-gray-600 font-bold">
                 <span className="hover:text-brand-gold cursor-pointer transition-colors">Logistics_Core</span>
                 <span className="hover:text-brand-gold cursor-pointer transition-colors">Import_API</span>
