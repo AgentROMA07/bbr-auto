@@ -289,7 +289,7 @@ function App() {
   const [lang, setLang] = useState(localStorage.getItem('lang') || 'kz');
   const [selectedCar, setSelectedCar] = useState(null);
   const [inventory] = useState(cars);
-  const [logo] = useState(localStorage.getItem('logo') || null);
+  const [logo] = useState(localStorage.getItem('logo') || '/logo.jpg');
   const [whatsappNumber] = useState(localStorage.getItem('whatsappNumber') || '+7 776 556 5757');
   const rawWhatsappDigits = whatsappNumber.replace(/\D/g, '').replace(/^8/, '7');
   const whatsappDigits = rawWhatsappDigits || '77765565757';
