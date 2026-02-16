@@ -104,6 +104,17 @@ const CarCard = ({ car, lang, t, onShowDetails, whatsappDigits }) => (
 
 const CarModal = ({ car, lang, t, onClose, whatsappDigits }) => {
   const [activeImg, setActiveImg] = useState(0);
+  const [activeColorId, setActiveColorId] = useState(null);
+  const colorVariants = car.colorVariants || [];
+  const activeColor = colorVariants.find((variant) => variant.id === activeColorId) || null;
+  const baseGallery = car.gallery || [];
+  const colorGallery =
+    activeColor && activeColor.images && activeColor.images.length > 0
+      ? activeColor.images
+      : null;
+  const gallery = colorGallery || baseGallery;
+  const safeIndex = gallery.length > 0 ? activeImg % gallery.length : 0;
+  const mainImage = gallery[safeIndex] || '';
 
   return (
     <Motion.div 
@@ -132,8 +143,8 @@ const CarModal = ({ car, lang, t, onClose, whatsappDigits }) => {
           <div className="relative flex-1 overflow-hidden">
             <AnimatePresence mode="wait">
               <Motion.img 
-                key={activeImg}
-                src={car.gallery[activeImg]} 
+                key={activeColor ? activeColor.id : activeImg}
+                src={mainImage} 
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 exit={{ opacity: 0 }}
@@ -142,16 +153,20 @@ const CarModal = ({ car, lang, t, onClose, whatsappDigits }) => {
               />
             </AnimatePresence>
             
-            {car.gallery.length > 1 && (
+            {gallery.length > 1 && (
               <>
                 <button 
-                  onClick={() => setActiveImg((prev) => (prev === 0 ? car.gallery.length - 1 : prev - 1))}
+                  onClick={() =>
+                    setActiveImg((prev) => (prev === 0 ? gallery.length - 1 : prev - 1))
+                  }
                   className="absolute left-2 md:left-4 top-1/2 -translate-y-1/2 w-8 h-8 md:w-12 md:h-12 bg-black/50 border border-white/10 rounded-full flex items-center justify-center text-white hover:bg-brand-gold hover:text-black transition-all"
                 >
                   <ChevronLeft size={18} md:size={24} />
                 </button>
                 <button 
-                  onClick={() => setActiveImg((prev) => (prev === car.gallery.length - 1 ? 0 : prev + 1))}
+                  onClick={() =>
+                    setActiveImg((prev) => (prev === gallery.length - 1 ? 0 : prev + 1))
+                  }
                   className="absolute right-2 md:right-4 top-1/2 -translate-y-1/2 w-8 h-8 md:w-12 md:h-12 bg-black/50 border border-white/10 rounded-full flex items-center justify-center text-white hover:bg-brand-gold hover:text-black transition-all"
                 >
                   <ChevronRight size={18} md:size={24} />
@@ -161,11 +176,15 @@ const CarModal = ({ car, lang, t, onClose, whatsappDigits }) => {
           </div>
           
           <div className="p-2 md:p-4 flex gap-2 overflow-x-auto bg-brand-dark/50 border-t border-white/5">
-            {car.gallery.map((img, idx) => (
+            {gallery.map((img, idx) => (
               <button 
                 key={idx}
-                onClick={() => setActiveImg(idx)}
-                className={`relative w-16 md:w-20 aspect-video rounded-lg overflow-hidden border-2 transition-all flex-shrink-0 ${idx === activeImg ? 'border-brand-gold' : 'border-transparent opacity-50 hover:opacity-100'}`}
+                onClick={() => {
+                  setActiveImg(idx);
+                }}
+                className={`relative w-16 md:w-20 aspect-video rounded-lg overflow-hidden border-2 transition-all flex-shrink-0 ${
+                  idx === activeImg ? 'border-brand-gold' : 'border-transparent opacity-50 hover:opacity-100'
+                }`}
               >
                 <img src={img} className="w-full h-full object-cover" />
               </button>
@@ -257,13 +276,44 @@ const CarModal = ({ car, lang, t, onClose, whatsappDigits }) => {
             </div>
           </div>
 
-          <div className="flex items-center justify-between mb-8">
-            <div>
-              <p className="text-[12px] md:text-[14px] text-brand-gold font-tech uppercase mb-2 tracking-widest font-bold">{t.car.value}</p>
-              <p className="text-2xl md:text-3xl font-tech font-bold text-white">
-                {car.price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, " ")} 
-                <span className="text-[10px] md:text-xs text-brand-gold opacity-50 uppercase tracking-widest ml-2">{t.car.million}</span>
-              </p>
+          <div className="flex flex-col gap-4 mb-8">
+            {colorVariants.length > 0 && (
+              <div className="flex items-center gap-3 flex-wrap">
+                <div className="text-[8px] md:text-[9px] font-tech text-gray-500 uppercase tracking-[0.25em]">
+                  Цвет кузова
+                </div>
+                <div className="flex items-center gap-2 flex-wrap">
+                  {colorVariants.map((variant) => (
+                    <button
+                      key={variant.id}
+                      type="button"
+                      onClick={() => {
+                        setActiveColorId(variant.id);
+                        setActiveImg(0);
+                      }}
+                      className={`w-7 h-7 md:w-8 md:h-8 rounded-full border-2 flex items-center justify-center transition-all ${
+                        activeColorId === variant.id
+                          ? 'border-brand-gold shadow-[0_0_0_4px_rgba(212,185,130,0.25)]'
+                          : 'border-white/20 hover:border-brand-gold/60'
+                      }`}
+                    >
+                      <span
+                        className="w-5 h-5 md:w-6 md:h-6 rounded-full"
+                        style={{ backgroundColor: variant.hex || '#ffffff' }}
+                      />
+                    </button>
+                  ))}
+                </div>
+              </div>
+            )}
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-[12px] md:text-[14px] text-brand-gold font-tech uppercase mb-2 tracking-widest font-bold">{t.car.value}</p>
+                <p className="text-2xl md:text-3xl font-tech font-bold text-white">
+                  {car.price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, " ")} 
+                  <span className="text-[10px] md:text-xs text-brand-gold opacity-50 uppercase tracking-widest ml-2">{t.car.million}</span>
+                </p>
+              </div>
             </div>
           </div>
 

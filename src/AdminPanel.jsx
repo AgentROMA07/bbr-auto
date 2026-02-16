@@ -32,6 +32,7 @@ const AdminPanel = () => {
   const [previewImages, setPreviewImages] = useState([]);
   const [lang, setLang] = useState(localStorage.getItem('lang') || 'kz');
   const [settingsLogo, setSettingsLogo] = useState(localStorage.getItem('logo') || null);
+  const [colorVariants, setColorVariants] = useState([]);
   const [whatsappNumber, setWhatsappNumber] = useState(localStorage.getItem('whatsappNumber') || '+7 707 123 45 67');
   const fileInputRef = useRef(null);
   const logoInputRef = useRef(null);
@@ -88,6 +89,50 @@ const AdminPanel = () => {
     alert(t.admin.save);
   };
 
+  const addColorVariant = () => {
+    setColorVariants((prev) => [
+      ...prev,
+      {
+        id: Date.now(),
+        name: '',
+        hex: '#ffffff',
+        images: [],
+      },
+    ]);
+  };
+
+  const updateColorVariant = (id, field, value) => {
+    setColorVariants((prev) =>
+      prev.map((variant) =>
+        variant.id === id ? { ...variant, [field]: value } : variant
+      )
+    );
+  };
+
+  const removeColorVariant = (id) => {
+    setColorVariants((prev) => prev.filter((variant) => variant.id !== id));
+  };
+
+  const handleColorImages = (id, files) => {
+    const fileList = Array.from(files || []);
+    fileList.forEach((file) => {
+      if (file && file.type.startsWith('image/')) {
+        const reader = new FileReader();
+        reader.onload = (e) => {
+          const base64 = e.target.result;
+          setColorVariants((prev) =>
+            prev.map((variant) =>
+              variant.id === id
+                ? { ...variant, images: [...(variant.images || []), base64] }
+                : variant
+            )
+          );
+        };
+        reader.readAsDataURL(file);
+      }
+    });
+  };
+
   const onDrag = (e) => {
     e.preventDefault();
     e.stopPropagation();
@@ -131,7 +176,8 @@ const AdminPanel = () => {
       price: Number(data.price),
       image: previewImages[0] || '',
       gallery: previewImages,
-      finance: financePayload
+      finance: financePayload,
+      colorVariants
     };
 
     const carData = isEdit ? baseUpdates : {
@@ -152,6 +198,7 @@ const AdminPanel = () => {
       setIsAddingCar(false);
     }
     setPreviewImages([]);
+    setColorVariants([]);
     reset();
   };
 
@@ -159,6 +206,12 @@ const AdminPanel = () => {
     setEditingCar(car);
     setIsAddingCar(true);
     setPreviewImages(car.gallery || [car.image]);
+    setColorVariants(
+      (car.colorVariants || []).map((variant) => ({
+        ...variant,
+        images: variant.images || (variant.image ? [variant.image] : []),
+      }))
+    );
     
     // Reset form with car data
     reset({
@@ -506,6 +559,120 @@ const AdminPanel = () => {
                           onChange={(e) => handleFiles(e.target.files)}
                         />
                       </div>
+                    </div>
+                  </div>
+
+                  <div className="pt-4 border-t border-white/5 space-y-4">
+                    <div className="flex items-center justify-between">
+                      <span className="text-[10px] font-bold text-white/40 uppercase tracking-widest">
+                        Цветовые варианты
+                      </span>
+                      <button
+                        type="button"
+                        onClick={addColorVariant}
+                        className="text-[10px] font-bold uppercase tracking-widest text-brand-gold hover:text-white transition-colors flex items-center gap-2"
+                      >
+                        <Plus size={14} />
+                        Добавить цвет
+                      </button>
+                    </div>
+
+                    <div className="space-y-4">
+                      {colorVariants.map((variant) => (
+                        <div
+                          key={variant.id}
+                          className="border border-white/10 rounded-2xl p-4 flex flex-col gap-3 bg-black/40"
+                        >
+                          <div className="flex items-center gap-3">
+                            <div
+                              className="w-6 h-6 rounded-full border border-white/10"
+                              style={{ backgroundColor: variant.hex || '#ffffff' }}
+                            />
+                            <input
+                              type="text"
+                              value={variant.name}
+                              onChange={(e) =>
+                                updateColorVariant(variant.id, 'name', e.target.value)
+                              }
+                              placeholder="Название цвета"
+                              className="flex-1 bg-transparent border border-white/10 rounded-xl px-3 py-2 text-xs focus:border-brand-gold outline-none transition-all"
+                            />
+                            <input
+                              type="color"
+                              value={variant.hex}
+                              onChange={(e) =>
+                                updateColorVariant(variant.id, 'hex', e.target.value)
+                              }
+                              className="w-10 h-10 rounded-full border border-white/10 bg-transparent cursor-pointer"
+                            />
+                            <button
+                              type="button"
+                              onClick={() => removeColorVariant(variant.id)}
+                              className="p-2 rounded-full bg-red-500/10 text-red-400 hover:bg-red-500/30 transition-colors"
+                            >
+                              <Trash2 size={14} />
+                            </button>
+                          </div>
+
+                          <div className="grid grid-cols-2 gap-3 items-center">
+                            <div className="text-[10px] text-white/40 uppercase tracking-widest">
+                              Превью автомобиля
+                            </div>
+                            <div className="flex flex-col gap-3">
+                              <div className="flex flex-wrap gap-2">
+                                {variant.images && variant.images.length > 0 ? (
+                                  variant.images.map((img, index) => (
+                                    <div
+                                      key={index}
+                                      className="relative w-16 h-12 rounded-xl overflow-hidden border border-white/10 bg-black flex items-center justify-center"
+                                    >
+                                      <img
+                                        src={img}
+                                        alt={variant.name || 'color image'}
+                                        className="w-full h-full object-cover"
+                                      />
+                                      <button
+                                        type="button"
+                                        onClick={() =>
+                                          setColorVariants((prev) =>
+                                            prev.map((v) =>
+                                              v.id === variant.id
+                                                ? {
+                                                    ...v,
+                                                    images: v.images.filter((_, i) => i !== index),
+                                                  }
+                                                : v
+                                            )
+                                          )
+                                        }
+                                        className="absolute top-1 right-1 p-1 rounded-full bg-red-500 text-white text-[8px]"
+                                      >
+                                        ×
+                                      </button>
+                                    </div>
+                                  ))
+                                ) : (
+                                  <div className="w-20 h-12 rounded-xl overflow-hidden border border-white/10 bg-black flex items-center justify-center">
+                                    <ImageIcon className="text-white/20" size={18} />
+                                  </div>
+                                )}
+                              </div>
+                              <label className="inline-flex items-center justify-center text-[10px] font-bold uppercase tracking-widest px-3 py-2 border border-white/10 rounded-xl cursor-pointer hover:border-brand-gold hover:text-brand-gold transition-colors w-fit">
+                                Добавить фото
+                                <input
+                                  type="file"
+                                  accept="image/*"
+                                  multiple
+                                  className="hidden"
+                                  onChange={(e) =>
+                                    handleColorImages(variant.id, e.target.files)
+                                  }
+                                />
+                              </label>
+                            </div>
+                          </div>
+                        </div>
+                      ))}
                     </div>
                   </div>
 
