@@ -20,22 +20,31 @@ import {
   Languages
 } from 'lucide-react';
 
+const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000';
+
 const AdminPanel = () => {
   const [activeTab, setActiveTab] = useState('cars');
-  const [cars, setCars] = useState(initialCars);
+  const [cars, setCars] = useState(() => {
+    const saved = localStorage.getItem('cars');
+    return saved ? JSON.parse(saved) : initialCars;
+  });
   const [editingCar, setEditingCar] = useState(null);
   const [isAddingCar, setIsAddingCar] = useState(false);
   const [dragActive, setDragActive] = useState(false);
   const [previewImages, setPreviewImages] = useState([]);
   const [lang, setLang] = useState(localStorage.getItem('lang') || 'kz');
-  const [settingsLogo, setSettingsLogo] = useState(null);
+  const [settingsLogo, setSettingsLogo] = useState(localStorage.getItem('logo') || null);
   const [colorVariants, setColorVariants] = useState([]);
-  const [whatsappNumber, setWhatsappNumber] = useState('+7 707 123 45 67');
+  const [whatsappNumber, setWhatsappNumber] = useState(localStorage.getItem('whatsappNumber') || '+7 707 123 45 67');
   const fileInputRef = useRef(null);
   const logoInputRef = useRef(null);
   
   const t = translations[lang];
   const isEdit = !!editingCar;
+  const saveCars = (list) => {
+    setCars(list);
+    localStorage.setItem('cars', JSON.stringify(list));
+  };
 
   const toggleLang = () => {
     const newLang = lang === 'kz' ? 'ru' : 'kz';
@@ -44,6 +53,79 @@ const AdminPanel = () => {
   };
 
   const { register, handleSubmit, reset } = useForm();
+
+  const syncCar = async (method, id, body) => {
+    try {
+      const url = id ? `${API_URL}/api/cars/${id}` : `${API_URL}/api/cars`;
+      const res = await fetch(url, {
+        method,
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: body ? JSON.stringify(body) : undefined,
+      });
+      if (!res.ok) {
+        return null;
+      }
+      if (res.status === 204) {
+        return null;
+      }
+      return await res.json();
+    } catch {
+      return null;
+    }
+  };
+
+  const syncSettings = async (payload) => {
+    try {
+      const res = await fetch(`${API_URL}/api/settings`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(payload),
+      });
+      if (!res.ok) {
+        return null;
+      }
+      return await res.json();
+    } catch {
+      return null;
+    }
+  };
+
+  useEffect(() => {
+    fetch(`${API_URL}/api/cars`)
+      .then((res) => (res.ok ? res.json() : null))
+      .then((data) => {
+        if (Array.isArray(data) && data.length > 0) {
+          setCars(data);
+          localStorage.setItem('cars', JSON.stringify(data));
+        }
+      })
+      .catch(() => {
+      });
+
+    fetch(`${API_URL}/api/settings`)
+      .then((res) => (res.ok ? res.json() : null))
+      .then((data) => {
+        if (!data || typeof data !== 'object') return;
+        if (Object.prototype.hasOwnProperty.call(data, 'logo')) {
+          setSettingsLogo(data.logo);
+          if (data.logo) {
+            localStorage.setItem('logo', data.logo);
+          }
+        }
+        if (Object.prototype.hasOwnProperty.call(data, 'whatsappNumber')) {
+          setWhatsappNumber(data.whatsappNumber);
+          if (data.whatsappNumber) {
+            localStorage.setItem('whatsappNumber', data.whatsappNumber);
+          }
+        }
+      })
+      .catch(() => {
+      });
+  }, []);
 
   const handleLogout = () => {
     localStorage.removeItem('isAuthenticated');
@@ -55,8 +137,8 @@ const AdminPanel = () => {
     fileList.forEach(file => {
       if (file && file.type.startsWith('image/')) {
         const reader = new FileReader();
-        reader.onload = (event) => {
-          const base64 = event.target.result;
+        reader.onload = (e) => {
+          const base64 = e.target.result;
           setPreviewImages(prev => [...prev, base64]);
         };
         reader.readAsDataURL(file);
@@ -74,23 +156,16 @@ const AdminPanel = () => {
     }
   };
 
-  const saveSettings = async () => {
-    try {
-      await fetch('/api/settings', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          salonName: '',
-          whatsappNumber,
-          logoUrl: settingsLogo || '',
-        }),
-      });
-      alert(t.admin.save);
-    } catch {
-      alert('Қате / Ошибка сохранения настроек');
+  const saveSettings = () => {
+    if (settingsLogo) {
+      localStorage.setItem('logo', settingsLogo);
     }
+    localStorage.setItem('whatsappNumber', whatsappNumber);
+    syncSettings({
+      logo: settingsLogo,
+      whatsappNumber,
+    });
+    alert(t.admin.save);
   };
 
   const addColorVariant = () => {
@@ -100,7 +175,7 @@ const AdminPanel = () => {
         id: Date.now(),
         name: '',
         hex: '#ffffff',
-        images: [],
+        image: '',
       },
     ]);
   };
@@ -117,24 +192,19 @@ const AdminPanel = () => {
     setColorVariants((prev) => prev.filter((variant) => variant.id !== id));
   };
 
-  const handleColorImages = (id, files) => {
-    const fileList = Array.from(files || []);
-    fileList.forEach((file) => {
-      if (file && file.type.startsWith('image/')) {
-        const reader = new FileReader();
-        reader.onload = (e) => {
-          const base64 = e.target.result;
-          setColorVariants((prev) =>
-            prev.map((variant) =>
-              variant.id === id
-                ? { ...variant, images: [...(variant.images || []), base64] }
-                : variant
-            )
-          );
-        };
-        reader.readAsDataURL(file);
-      }
-    });
+  const handleColorImage = (id, file) => {
+    if (file && file.type.startsWith('image/')) {
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        const base64 = e.target.result;
+        setColorVariants((prev) =>
+          prev.map((variant) =>
+            variant.id === id ? { ...variant, image: base64 } : variant
+          )
+        );
+      };
+      reader.readAsDataURL(file);
+    }
   };
 
   const onDrag = (e) => {
@@ -156,13 +226,10 @@ const AdminPanel = () => {
     }
   };
 
-  const deleteCar = async (id) => {
-    if (!window.confirm(t.admin.confirm_delete)) return;
-    try {
-      await fetch(`/api/cars?id=${id}`, { method: 'DELETE' });
-      setCars(cars.filter((c) => c.id !== id));
-    } catch {
-      alert('Қате / Ошибка удаления');
+  const deleteCar = (id) => {
+    if (window.confirm(t.admin.confirm_delete)) {
+      saveCars(cars.filter(c => c.id !== id));
+      syncCar('DELETE', id);
     }
   };
 
@@ -188,98 +255,39 @@ const AdminPanel = () => {
       colorVariants
     };
 
-    const payload = isEdit
-      ? { id: editingCar.id, ...editingCar, ...baseUpdates }
-      : { ...data, ...baseUpdates };
-
-    try {
-      const res = await fetch('/api/cars', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(payload),
-      });
-
-      if (!res.ok) {
-        let message = 'Қате / Ошибка сохранения авто';
-        const contentType = res.headers.get('Content-Type') || '';
-        if (contentType.includes('application/json')) {
-          try {
-            const errJson = await res.json();
-            if (errJson?.detail) {
-              message += `: ${errJson.detail}`;
-            }
-          } catch (parseError) {
-            console.error(parseError);
-          }
-        }
-        throw new Error(message);
-      }
-
-      const json = await res.json();
-      if (!isEdit && json.id) {
-        payload.id = json.id;
-      }
-
-      if (isEdit) {
-        setCars(cars.map((c) => (c.id === editingCar.id ? { ...c, ...payload } : c)));
-        setEditingCar(null);
-      } else {
-        setCars([payload, ...cars]);
-        setIsAddingCar(false);
-      }
-
-      setPreviewImages([]);
-      setColorVariants([]);
-      reset();
-    } catch (err) {
-      alert(err.message || 'Қате / Ошибка сохранения авто');
-    }
-  };
-
-  useEffect(() => {
-    const loadInitial = async () => {
-      try {
-        const [carsRes, settingsRes] = await Promise.all([
-          fetch('/api/cars'),
-          fetch('/api/settings'),
-        ]);
-
-        if (carsRes.ok) {
-          const json = await carsRes.json();
-          if (Array.isArray(json.cars)) {
-            setCars(json.cars);
-          }
-        }
-
-        if (settingsRes.ok) {
-          const s = await settingsRes.json();
-          if (s.whatsappNumber) {
-            setWhatsappNumber(s.whatsappNumber);
-          }
-          if (s.logoUrl) {
-            setSettingsLogo(s.logoUrl);
-          }
-        }
-      } catch {
-        // fallback silently, локальное состояние уже заполнено initialCars
-      }
+    const carData = isEdit ? baseUpdates : {
+      ...data,
+      ...baseUpdates
     };
 
-    loadInitial();
-  }, []);
+    if (editingCar) {
+      const updatedCar = { ...editingCar, ...carData };
+      const payload = { ...updatedCar };
+      delete payload.id;
+      const serverCar = await syncCar('PUT', editingCar.id, payload);
+      const finalCar = serverCar || updatedCar;
+      saveCars(cars.map((c) => (c.id === editingCar.id ? finalCar : c)));
+      setEditingCar(null);
+    } else {
+      const payload = { ...carData };
+      const serverCar = await syncCar('POST', null, payload);
+      const createdCar = serverCar || {
+        ...carData,
+        id: (cars.length ? Math.max(...cars.map((c) => c.id || 0)) : 0) + 1,
+      };
+      saveCars([createdCar, ...cars]);
+      setIsAddingCar(false);
+    }
+    setPreviewImages([]);
+    setColorVariants([]);
+    reset();
+  };
 
   const startEdit = (car) => {
     setEditingCar(car);
     setIsAddingCar(true);
     setPreviewImages(car.gallery || [car.image]);
-    setColorVariants(
-      (car.colorVariants || []).map((variant) => ({
-        ...variant,
-        images: variant.images || (variant.image ? [variant.image] : []),
-      }))
-    );
+    setColorVariants(car.colorVariants || []);
     
     // Reset form with car data
     reset({
@@ -686,54 +694,26 @@ const AdminPanel = () => {
                             <div className="text-[10px] text-white/40 uppercase tracking-widest">
                               Превью автомобиля
                             </div>
-                            <div className="flex flex-col gap-3">
-                              <div className="flex flex-wrap gap-2">
-                                {variant.images && variant.images.length > 0 ? (
-                                  variant.images.map((img, index) => (
-                                    <div
-                                      key={index}
-                                      className="relative w-16 h-12 rounded-xl overflow-hidden border border-white/10 bg-black flex items-center justify-center"
-                                    >
-                                      <img
-                                        src={img}
-                                        alt={variant.name || 'color image'}
-                                        className="w-full h-full object-cover"
-                                      />
-                                      <button
-                                        type="button"
-                                        onClick={() =>
-                                          setColorVariants((prev) =>
-                                            prev.map((v) =>
-                                              v.id === variant.id
-                                                ? {
-                                                    ...v,
-                                                    images: v.images.filter((_, i) => i !== index),
-                                                  }
-                                                : v
-                                            )
-                                          )
-                                        }
-                                        className="absolute top-1 right-1 p-1 rounded-full bg-red-500 text-white text-[8px]"
-                                      >
-                                        ×
-                                      </button>
-                                    </div>
-                                  ))
+                            <div className="flex items-center gap-3">
+                              <div className="w-20 h-12 rounded-xl overflow-hidden border border-white/10 bg-black flex items-center justify-center">
+                                {variant.image ? (
+                                  <img
+                                    src={variant.image}
+                                    alt={variant.name || 'color image'}
+                                    className="w-full h-full object-cover"
+                                  />
                                 ) : (
-                                  <div className="w-20 h-12 rounded-xl overflow-hidden border border-white/10 bg-black flex items-center justify-center">
-                                    <ImageIcon className="text-white/20" size={18} />
-                                  </div>
+                                  <ImageIcon className="text-white/20" size={18} />
                                 )}
                               </div>
-                              <label className="inline-flex items-center justify-center text-[10px] font-bold uppercase tracking-widest px-3 py-2 border border-white/10 rounded-xl cursor-pointer hover:border-brand-gold hover:text-brand-gold transition-colors w-fit">
-                                Добавить фото
+                              <label className="text-[10px] font-bold uppercase tracking-widest px-3 py-2 border border-white/10 rounded-xl cursor-pointer hover:border-brand-gold hover:text-brand-gold transition-colors">
+                                Загрузить
                                 <input
                                   type="file"
                                   accept="image/*"
-                                  multiple
                                   className="hidden"
                                   onChange={(e) =>
-                                    handleColorImages(variant.id, e.target.files)
+                                    handleColorImage(variant.id, e.target.files[0])
                                   }
                                 />
                               </label>

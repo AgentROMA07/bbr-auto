@@ -107,14 +107,7 @@ const CarModal = ({ car, lang, t, onClose, whatsappDigits }) => {
   const [activeColorId, setActiveColorId] = useState(null);
   const colorVariants = car.colorVariants || [];
   const activeColor = colorVariants.find((variant) => variant.id === activeColorId) || null;
-  const baseGallery = car.gallery || [];
-  const colorGallery =
-    activeColor && activeColor.images && activeColor.images.length > 0
-      ? activeColor.images
-      : null;
-  const gallery = colorGallery || baseGallery;
-  const safeIndex = gallery.length > 0 ? activeImg % gallery.length : 0;
-  const mainImage = gallery[safeIndex] || '';
+  const mainImage = activeColor?.image || car.gallery[activeImg];
 
   return (
     <Motion.div 
@@ -153,20 +146,16 @@ const CarModal = ({ car, lang, t, onClose, whatsappDigits }) => {
               />
             </AnimatePresence>
             
-            {gallery.length > 1 && (
+            {car.gallery.length > 1 && (
               <>
                 <button 
-                  onClick={() =>
-                    setActiveImg((prev) => (prev === 0 ? gallery.length - 1 : prev - 1))
-                  }
+                  onClick={() => setActiveImg((prev) => (prev === 0 ? car.gallery.length - 1 : prev - 1))}
                   className="absolute left-2 md:left-4 top-1/2 -translate-y-1/2 w-8 h-8 md:w-12 md:h-12 bg-black/50 border border-white/10 rounded-full flex items-center justify-center text-white hover:bg-brand-gold hover:text-black transition-all"
                 >
                   <ChevronLeft size={18} md:size={24} />
                 </button>
                 <button 
-                  onClick={() =>
-                    setActiveImg((prev) => (prev === gallery.length - 1 ? 0 : prev + 1))
-                  }
+                  onClick={() => setActiveImg((prev) => (prev === car.gallery.length - 1 ? 0 : prev + 1))}
                   className="absolute right-2 md:right-4 top-1/2 -translate-y-1/2 w-8 h-8 md:w-12 md:h-12 bg-black/50 border border-white/10 rounded-full flex items-center justify-center text-white hover:bg-brand-gold hover:text-black transition-all"
                 >
                   <ChevronRight size={18} md:size={24} />
@@ -176,15 +165,14 @@ const CarModal = ({ car, lang, t, onClose, whatsappDigits }) => {
           </div>
           
           <div className="p-2 md:p-4 flex gap-2 overflow-x-auto bg-brand-dark/50 border-t border-white/5">
-            {gallery.map((img, idx) => (
+            {car.gallery.map((img, idx) => (
               <button 
                 key={idx}
                 onClick={() => {
                   setActiveImg(idx);
+                  setActiveColorId(null);
                 }}
-                className={`relative w-16 md:w-20 aspect-video rounded-lg overflow-hidden border-2 transition-all flex-shrink-0 ${
-                  idx === activeImg ? 'border-brand-gold' : 'border-transparent opacity-50 hover:opacity-100'
-                }`}
+                className={`relative w-16 md:w-20 aspect-video rounded-lg overflow-hidden border-2 transition-all flex-shrink-0 ${idx === activeImg && !activeColor ? 'border-brand-gold' : 'border-transparent opacity-50 hover:opacity-100'}`}
               >
                 <img src={img} className="w-full h-full object-cover" />
               </button>
@@ -287,10 +275,7 @@ const CarModal = ({ car, lang, t, onClose, whatsappDigits }) => {
                     <button
                       key={variant.id}
                       type="button"
-                      onClick={() => {
-                        setActiveColorId(variant.id);
-                        setActiveImg(0);
-                      }}
+                      onClick={() => setActiveColorId(variant.id)}
                       className={`w-7 h-7 md:w-8 md:h-8 rounded-full border-2 flex items-center justify-center transition-all ${
                         activeColorId === variant.id
                           ? 'border-brand-gold shadow-[0_0_0_4px_rgba(212,185,130,0.25)]'
@@ -330,12 +315,17 @@ const CarModal = ({ car, lang, t, onClose, whatsappDigits }) => {
   );
 };
 
+const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000';
+
 function App() {
   const [lang, setLang] = useState(localStorage.getItem('lang') || 'kz');
   const [selectedCar, setSelectedCar] = useState(null);
-  const [inventory, setInventory] = useState(cars);
-  const [logo, setLogo] = useState(null);
-  const [whatsappNumber, setWhatsappNumber] = useState('+7 707 123 45 67');
+  const [inventory, setInventory] = useState(() => {
+    const saved = localStorage.getItem('cars');
+    return saved ? JSON.parse(saved) : cars;
+  });
+  const [logo, setLogo] = useState(localStorage.getItem('logo') || null);
+  const [whatsappNumber, setWhatsappNumber] = useState(localStorage.getItem('whatsappNumber') || '+7 707 123 45 67');
   const rawWhatsappDigits = whatsappNumber.replace(/\D/g, '').replace(/^8/, '7');
   const whatsappDigits = rawWhatsappDigits || '77071234567';
   const t = translations[lang];
@@ -347,35 +337,30 @@ function App() {
   };
 
   useEffect(() => {
-    const loadFromApi = async () => {
-      try {
-        const [carsRes, settingsRes] = await Promise.all([
-          fetch('/api/cars'),
-          fetch('/api/settings'),
-        ]);
-
-        if (carsRes.ok) {
-          const json = await carsRes.json();
-          if (Array.isArray(json.cars) && json.cars.length > 0) {
-            setInventory(json.cars);
-          }
+    fetch(`${API_URL}/api/cars`)
+      .then((res) => (res.ok ? res.json() : null))
+      .then((data) => {
+        if (Array.isArray(data)) {
+          setInventory(data);
+          localStorage.setItem('cars', JSON.stringify(data));
         }
+      })
+      .catch(() => {});
 
-        if (settingsRes.ok) {
-          const s = await settingsRes.json();
-          if (s.whatsappNumber) {
-            setWhatsappNumber(s.whatsappNumber);
-          }
-          if (s.logoUrl) {
-            setLogo(s.logoUrl);
-          }
+    fetch(`${API_URL}/api/settings`)
+      .then((res) => (res.ok ? res.json() : null))
+      .then((data) => {
+        if (!data || typeof data !== 'object') return;
+        if (data.logo) {
+          setLogo(data.logo);
+          localStorage.setItem('logo', data.logo);
         }
-      } catch {
-        // тихий fallback на данные из data.js
-      }
-    };
-
-    loadFromApi();
+        if (data.whatsappNumber) {
+          setWhatsappNumber(data.whatsappNumber);
+          localStorage.setItem('whatsappNumber', data.whatsappNumber);
+        }
+      })
+      .catch(() => {});
   }, []);
 
   return (
