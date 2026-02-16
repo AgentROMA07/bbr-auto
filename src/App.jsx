@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion as Motion, AnimatePresence } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import { 
@@ -333,12 +333,9 @@ const CarModal = ({ car, lang, t, onClose, whatsappDigits }) => {
 function App() {
   const [lang, setLang] = useState(localStorage.getItem('lang') || 'kz');
   const [selectedCar, setSelectedCar] = useState(null);
-  const [inventory] = useState(() => {
-    const saved = localStorage.getItem('cars');
-    return saved ? JSON.parse(saved) : cars;
-  });
-  const [logo] = useState(localStorage.getItem('logo') || null);
-  const [whatsappNumber] = useState(localStorage.getItem('whatsappNumber') || '+7 707 123 45 67');
+  const [inventory, setInventory] = useState(cars);
+  const [logo, setLogo] = useState(null);
+  const [whatsappNumber, setWhatsappNumber] = useState('+7 707 123 45 67');
   const rawWhatsappDigits = whatsappNumber.replace(/\D/g, '').replace(/^8/, '7');
   const whatsappDigits = rawWhatsappDigits || '77071234567';
   const t = translations[lang];
@@ -348,6 +345,38 @@ function App() {
     setLang(newLang);
     localStorage.setItem('lang', newLang);
   };
+
+  useEffect(() => {
+    const loadFromApi = async () => {
+      try {
+        const [carsRes, settingsRes] = await Promise.all([
+          fetch('/api/cars'),
+          fetch('/api/settings'),
+        ]);
+
+        if (carsRes.ok) {
+          const json = await carsRes.json();
+          if (Array.isArray(json.cars) && json.cars.length > 0) {
+            setInventory(json.cars);
+          }
+        }
+
+        if (settingsRes.ok) {
+          const s = await settingsRes.json();
+          if (s.whatsappNumber) {
+            setWhatsappNumber(s.whatsappNumber);
+          }
+          if (s.logoUrl) {
+            setLogo(s.logoUrl);
+          }
+        }
+      } catch {
+        // тихий fallback на данные из data.js
+      }
+    };
+
+    loadFromApi();
+  }, []);
 
   return (
     <div className="min-h-screen bg-brand-dark text-white font-sans selection:bg-brand-gold selection:text-black relative">

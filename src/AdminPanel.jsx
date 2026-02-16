@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { translations, cars as initialCars } from './data';
 import { 
@@ -22,27 +22,20 @@ import {
 
 const AdminPanel = () => {
   const [activeTab, setActiveTab] = useState('cars');
-  const [cars, setCars] = useState(() => {
-    const saved = localStorage.getItem('cars');
-    return saved ? JSON.parse(saved) : initialCars;
-  });
+  const [cars, setCars] = useState(initialCars);
   const [editingCar, setEditingCar] = useState(null);
   const [isAddingCar, setIsAddingCar] = useState(false);
   const [dragActive, setDragActive] = useState(false);
   const [previewImages, setPreviewImages] = useState([]);
   const [lang, setLang] = useState(localStorage.getItem('lang') || 'kz');
-  const [settingsLogo, setSettingsLogo] = useState(localStorage.getItem('logo') || null);
+  const [settingsLogo, setSettingsLogo] = useState(null);
   const [colorVariants, setColorVariants] = useState([]);
-  const [whatsappNumber, setWhatsappNumber] = useState(localStorage.getItem('whatsappNumber') || '+7 707 123 45 67');
+  const [whatsappNumber, setWhatsappNumber] = useState('+7 707 123 45 67');
   const fileInputRef = useRef(null);
   const logoInputRef = useRef(null);
   
   const t = translations[lang];
   const isEdit = !!editingCar;
-  const saveCars = (list) => {
-    setCars(list);
-    localStorage.setItem('cars', JSON.stringify(list));
-  };
 
   const toggleLang = () => {
     const newLang = lang === 'kz' ? 'ru' : 'kz';
@@ -62,8 +55,8 @@ const AdminPanel = () => {
     fileList.forEach(file => {
       if (file && file.type.startsWith('image/')) {
         const reader = new FileReader();
-        reader.onload = (e) => {
-          const base64 = e.target.result;
+        reader.onload = (event) => {
+          const base64 = event.target.result;
           setPreviewImages(prev => [...prev, base64]);
         };
         reader.readAsDataURL(file);
@@ -81,12 +74,23 @@ const AdminPanel = () => {
     }
   };
 
-  const saveSettings = () => {
-    if (settingsLogo) {
-      localStorage.setItem('logo', settingsLogo);
+  const saveSettings = async () => {
+    try {
+      await fetch('/api/settings', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          salonName: '',
+          whatsappNumber,
+          logoUrl: settingsLogo || '',
+        }),
+      });
+      alert(t.admin.save);
+    } catch {
+      alert('Қате / Ошибка сохранения настроек');
     }
-    localStorage.setItem('whatsappNumber', whatsappNumber);
-    alert(t.admin.save);
   };
 
   const addColorVariant = () => {
@@ -152,13 +156,17 @@ const AdminPanel = () => {
     }
   };
 
-  const deleteCar = (id) => {
-    if (window.confirm(t.admin.confirm_delete)) {
-      saveCars(cars.filter(c => c.id !== id));
+  const deleteCar = async (id) => {
+    if (!window.confirm(t.admin.confirm_delete)) return;
+    try {
+      await fetch(`/api/cars?id=${id}`, { method: 'DELETE' });
+      setCars(cars.filter((c) => c.id !== id));
+    } catch {
+      alert('Қате / Ошибка удаления');
     }
   };
 
-  const onSubmit = (data) => {
+  const onSubmit = async (data) => {
     const financePayload = {
       installment: [
         { months: Number(data.inst_m1), price: Number(data.inst_p1) },
@@ -180,27 +188,75 @@ const AdminPanel = () => {
       colorVariants
     };
 
-    const carData = isEdit ? baseUpdates : {
-      ...data,
-      ...baseUpdates
+    const payload = isEdit
+      ? { id: editingCar.id, ...editingCar, ...baseUpdates }
+      : { ...data, ...baseUpdates };
+
+    try {
+      const res = await fetch('/api/cars', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(payload),
+      });
+
+      if (!res.ok) {
+        throw new Error('Failed to save');
+      }
+
+      const json = await res.json();
+      if (!isEdit && json.id) {
+        payload.id = json.id;
+      }
+
+      if (isEdit) {
+        setCars(cars.map((c) => (c.id === editingCar.id ? { ...c, ...payload } : c)));
+        setEditingCar(null);
+      } else {
+        setCars([payload, ...cars]);
+        setIsAddingCar(false);
+      }
+
+      setPreviewImages([]);
+      setColorVariants([]);
+      reset();
+    } catch {
+      alert('Қате / Ошибка сохранения авто');
+    }
+  };
+
+  useEffect(() => {
+    const loadInitial = async () => {
+      try {
+        const [carsRes, settingsRes] = await Promise.all([
+          fetch('/api/cars'),
+          fetch('/api/settings'),
+        ]);
+
+        if (carsRes.ok) {
+          const json = await carsRes.json();
+          if (Array.isArray(json.cars)) {
+            setCars(json.cars);
+          }
+        }
+
+        if (settingsRes.ok) {
+          const s = await settingsRes.json();
+          if (s.whatsappNumber) {
+            setWhatsappNumber(s.whatsappNumber);
+          }
+          if (s.logoUrl) {
+            setSettingsLogo(s.logoUrl);
+          }
+        }
+      } catch {
+        // fallback silently, локальное состояние уже заполнено initialCars
+      }
     };
 
-    if (editingCar) {
-      saveCars(cars.map(c => c.id === editingCar.id ? { ...c, ...carData } : c));
-      setEditingCar(null);
-    } else {
-      const newId = (cars.length ? Math.max(...cars.map((c) => c.id || 0)) : 0) + 1;
-      const newCar = {
-        ...carData,
-        id: newId,
-      };
-      saveCars([newCar, ...cars]);
-      setIsAddingCar(false);
-    }
-    setPreviewImages([]);
-    setColorVariants([]);
-    reset();
-  };
+    loadInitial();
+  }, []);
 
   const startEdit = (car) => {
     setEditingCar(car);
