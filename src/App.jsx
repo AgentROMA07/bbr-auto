@@ -65,7 +65,8 @@ const CarCard = ({ car, lang, t, onShowDetails, whatsappDigits }) => (
       <div className="p-6">
         <div className="mb-6">
           <h3 className="text-xl font-tech font-bold text-white mb-2 group-hover:translate-x-1 transition-transform">{car.model}</h3>
-          <div className="flex flex-wrap gap-3">
+          <div className="flex items-center justify-between gap-3 mb-3">
+            <div className="flex flex-wrap gap-3">
             {[
               { label: '2024', icon: <Layers size={12} /> },
               { label: car.engine[lang].split(' ')[0], icon: <Cpu size={12} /> },
@@ -76,6 +77,12 @@ const CarCard = ({ car, lang, t, onShowDetails, whatsappDigits }) => (
                 {tag.label}
               </div>
             ))}
+            </div>
+            <div className="flex items-center gap-1">
+              <span className="w-3 h-3 rounded-full bg-white border border-white/30" />
+              <span className="w-3 h-3 rounded-full bg-black border border-white/30" />
+              <span className="w-3 h-3 rounded-full bg-neutral-500 border border-white/30" />
+            </div>
           </div>
         </div>
 
@@ -283,9 +290,9 @@ function App() {
   const [selectedCar, setSelectedCar] = useState(null);
   const [inventory] = useState(cars);
   const [logo] = useState(localStorage.getItem('logo') || null);
-  const [whatsappNumber] = useState(localStorage.getItem('whatsappNumber') || '+7 707 123 45 67');
+  const [whatsappNumber] = useState(localStorage.getItem('whatsappNumber') || '+7 776 556 5757');
   const rawWhatsappDigits = whatsappNumber.replace(/\D/g, '').replace(/^8/, '7');
-  const whatsappDigits = rawWhatsappDigits || '77071234567';
+  const whatsappDigits = rawWhatsappDigits || '77765565757';
   const t = translations[lang];
 
   const toggleLang = () => {
@@ -539,7 +546,7 @@ function App() {
                 <div>
                   <p className="text-[8px] md:text-[10px] font-tech font-bold text-brand-gold tracking-[0.4em] mb-6 md:mb-8 uppercase text-center sm:text-left">{t.footer.links}</p>
                   <ul className="space-y-4 md:space-y-6 text-[8px] md:text-[10px] font-tech text-gray-400 tracking-widest uppercase flex flex-col items-center sm:items-start">
-                    <li className="flex items-center gap-3 hover:text-brand-gold transition-colors cursor-pointer"><Terminal size={12} /> +7 707 123 45 67</li>
+                    <li className="flex items-center gap-3 hover:text-brand-gold transition-colors cursor-pointer"><Terminal size={12} /> +7 776 556 5757</li>
                     <li className="flex items-center gap-3 hover:text-brand-gold transition-colors cursor-pointer"><Hexagon size={12} /> info@bbr.tech</li>
                     <li className="flex items-center gap-3 hover:text-brand-gold transition-colors cursor-pointer"><Instagram size={12} /> @bbr_rulit</li>
                   </ul>
