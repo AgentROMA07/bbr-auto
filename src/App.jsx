@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { motion as Motion, AnimatePresence } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import { 
@@ -104,10 +104,6 @@ const CarCard = ({ car, lang, t, onShowDetails, whatsappDigits }) => (
 
 const CarModal = ({ car, lang, t, onClose, whatsappDigits }) => {
   const [activeImg, setActiveImg] = useState(0);
-  const [activeColorId, setActiveColorId] = useState(null);
-  const colorVariants = car.colorVariants || [];
-  const activeColor = colorVariants.find((variant) => variant.id === activeColorId) || null;
-  const mainImage = activeColor?.image || car.gallery[activeImg];
 
   return (
     <Motion.div 
@@ -136,8 +132,8 @@ const CarModal = ({ car, lang, t, onClose, whatsappDigits }) => {
           <div className="relative flex-1 overflow-hidden">
             <AnimatePresence mode="wait">
               <Motion.img 
-                key={activeColor ? activeColor.id : activeImg}
-                src={mainImage} 
+                key={activeImg}
+                src={car.gallery[activeImg]} 
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 exit={{ opacity: 0 }}
@@ -168,11 +164,8 @@ const CarModal = ({ car, lang, t, onClose, whatsappDigits }) => {
             {car.gallery.map((img, idx) => (
               <button 
                 key={idx}
-                onClick={() => {
-                  setActiveImg(idx);
-                  setActiveColorId(null);
-                }}
-                className={`relative w-16 md:w-20 aspect-video rounded-lg overflow-hidden border-2 transition-all flex-shrink-0 ${idx === activeImg && !activeColor ? 'border-brand-gold' : 'border-transparent opacity-50 hover:opacity-100'}`}
+                onClick={() => setActiveImg(idx)}
+                className={`relative w-16 md:w-20 aspect-video rounded-lg overflow-hidden border-2 transition-all flex-shrink-0 ${idx === activeImg ? 'border-brand-gold' : 'border-transparent opacity-50 hover:opacity-100'}`}
               >
                 <img src={img} className="w-full h-full object-cover" />
               </button>
@@ -264,41 +257,13 @@ const CarModal = ({ car, lang, t, onClose, whatsappDigits }) => {
             </div>
           </div>
 
-          <div className="flex flex-col gap-4 mb-8">
-            {colorVariants.length > 0 && (
-              <div className="flex items-center gap-3 flex-wrap">
-                <div className="text-[8px] md:text-[9px] font-tech text-gray-500 uppercase tracking-[0.25em]">
-                  Цвет кузова
-                </div>
-                <div className="flex items-center gap-2 flex-wrap">
-                  {colorVariants.map((variant) => (
-                    <button
-                      key={variant.id}
-                      type="button"
-                      onClick={() => setActiveColorId(variant.id)}
-                      className={`w-7 h-7 md:w-8 md:h-8 rounded-full border-2 flex items-center justify-center transition-all ${
-                        activeColorId === variant.id
-                          ? 'border-brand-gold shadow-[0_0_0_4px_rgba(212,185,130,0.25)]'
-                          : 'border-white/20 hover:border-brand-gold/60'
-                      }`}
-                    >
-                      <span
-                        className="w-5 h-5 md:w-6 md:h-6 rounded-full"
-                        style={{ backgroundColor: variant.hex || '#ffffff' }}
-                      />
-                    </button>
-                  ))}
-                </div>
-              </div>
-            )}
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-[12px] md:text-[14px] text-brand-gold font-tech uppercase mb-2 tracking-widest font-bold">{t.car.value}</p>
-                <p className="text-2xl md:text-3xl font-tech font-bold text-white">
-                  {car.price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, " ")} 
-                  <span className="text-[10px] md:text-xs text-brand-gold opacity-50 uppercase tracking-widest ml-2">{t.car.million}</span>
-                </p>
-              </div>
+          <div className="flex items-center justify-between mb-8">
+            <div>
+              <p className="text-[12px] md:text-[14px] text-brand-gold font-tech uppercase mb-2 tracking-widest font-bold">{t.car.value}</p>
+              <p className="text-2xl md:text-3xl font-tech font-bold text-white">
+                {car.price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, " ")} 
+                <span className="text-[10px] md:text-xs text-brand-gold opacity-50 uppercase tracking-widest ml-2">{t.car.million}</span>
+              </p>
             </div>
           </div>
 
@@ -315,17 +280,15 @@ const CarModal = ({ car, lang, t, onClose, whatsappDigits }) => {
   );
 };
 
-const API_URL = import.meta.env.VITE_API_URL || '';
-
 function App() {
   const [lang, setLang] = useState(localStorage.getItem('lang') || 'kz');
   const [selectedCar, setSelectedCar] = useState(null);
-  const [inventory, setInventory] = useState(() => {
+  const [inventory] = useState(() => {
     const saved = localStorage.getItem('cars');
     return saved ? JSON.parse(saved) : cars;
   });
-  const [logo, setLogo] = useState(localStorage.getItem('logo') || null);
-  const [whatsappNumber, setWhatsappNumber] = useState(localStorage.getItem('whatsappNumber') || '+7 707 123 45 67');
+  const [logo] = useState(localStorage.getItem('logo') || null);
+  const [whatsappNumber] = useState(localStorage.getItem('whatsappNumber') || '+7 707 123 45 67');
   const rawWhatsappDigits = whatsappNumber.replace(/\D/g, '').replace(/^8/, '7');
   const whatsappDigits = rawWhatsappDigits || '77071234567';
   const t = translations[lang];
@@ -335,33 +298,6 @@ function App() {
     setLang(newLang);
     localStorage.setItem('lang', newLang);
   };
-
-  useEffect(() => {
-    fetch(`${API_URL}/api/cars`)
-      .then((res) => (res.ok ? res.json() : null))
-      .then((data) => {
-        if (Array.isArray(data)) {
-          setInventory(data);
-          localStorage.setItem('cars', JSON.stringify(data));
-        }
-      })
-      .catch(() => {});
-
-    fetch(`${API_URL}/api/settings`)
-      .then((res) => (res.ok ? res.json() : null))
-      .then((data) => {
-        if (!data || typeof data !== 'object') return;
-        if (data.logo) {
-          setLogo(data.logo);
-          localStorage.setItem('logo', data.logo);
-        }
-        if (data.whatsappNumber) {
-          setWhatsappNumber(data.whatsappNumber);
-          localStorage.setItem('whatsappNumber', data.whatsappNumber);
-        }
-      })
-      .catch(() => {});
-  }, []);
 
   return (
     <div className="min-h-screen bg-brand-dark text-white font-sans selection:bg-brand-gold selection:text-black relative">

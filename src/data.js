@@ -256,11 +256,9 @@ export const cars = [
     },
     price: 8000000,
     brand: "Changan",
-    image: "https://images.unsplash.com/photo-1619767886558-efdc259cde1a?auto=format&fit=crop&q=80&w=1200",
+    image: "/cars/Changan X5 Plus Pro.png",
     gallery: [
-      "https://images.unsplash.com/photo-1619767886558-efdc259cde1a?auto=format&fit=crop&q=80&w=1200",
-      "https://images.unsplash.com/photo-1533473359331-0135ef1b58bf?auto=format&fit=crop&q=80&w=1200",
-      "https://images.unsplash.com/photo-1503376780353-7e6692767b70?auto=format&fit=crop&q=80&w=1200"
+      "/cars/Changan X5 Plus Pro.png"
     ]
   },
   {
@@ -285,11 +283,9 @@ export const cars = [
     },
     price: 9500000,
     brand: "Changan",
-    image: "https://images.unsplash.com/photo-1617469767053-d3b523a0b982?auto=format&fit=crop&q=80&w=1200",
+    image: "/cars/changan_cs55_plus_1192830.jpg",
     gallery: [
-      "https://images.unsplash.com/photo-1617469767053-d3b523a0b982?auto=format&fit=crop&q=80&w=1200",
-      "https://images.unsplash.com/photo-1621007947382-bb3c3994e3fb?auto=format&fit=crop&q=80&w=1200",
-      "https://images.unsplash.com/photo-1583121274602-3e2820c69888?auto=format&fit=crop&q=80&w=1200"
+      "/cars/changan_cs55_plus_1192830.jpg"
     ]
   },
   {
@@ -314,10 +310,9 @@ export const cars = [
     },
     price: 11200000,
     brand: "Changan",
-    image: "https://images.unsplash.com/photo-1621007947382-bb3c3994e3fb?auto=format&fit=crop&q=80&w=1200",
+    image: "/cars/Changan 75 Plus (1.5).webp",
     gallery: [
-      "https://images.unsplash.com/photo-1621007947382-bb3c3994e3fb?auto=format&fit=crop&q=80&w=1200",
-      "https://images.unsplash.com/photo-1503376780353-7e6692767b70?auto=format&fit=crop&q=80&w=1200"
+      "/cars/Changan 75 Plus (1.5).webp"
     ]
   },
   {
@@ -342,10 +337,9 @@ export const cars = [
     },
     price: 13200000,
     brand: "Changan",
-    image: "https://images.unsplash.com/photo-1533473359331-0135ef1b58bf?auto=format&fit=crop&q=80&w=1200",
+    image: "/cars/Changan 75 Plus (2.0).jpg",
     gallery: [
-      "https://images.unsplash.com/photo-1533473359331-0135ef1b58bf?auto=format&fit=crop&q=80&w=1200",
-      "https://images.unsplash.com/photo-1503376780353-7e6692767b70?auto=format&fit=crop&q=80&w=1200"
+      "/cars/Changan 75 Plus (2.0).jpg"
     ]
   },
   {
@@ -370,10 +364,9 @@ export const cars = [
     },
     price: 10500000,
     brand: "Changan",
-    image: "https://images.unsplash.com/photo-1503376780353-7e6692767b70?auto=format&fit=crop&q=80&w=1200",
+    image: "/cars/Changan 75 Pro.png",
     gallery: [
-      "https://images.unsplash.com/photo-1503376780353-7e6692767b70?auto=format&fit=crop&q=80&w=1200",
-      "https://images.unsplash.com/photo-1583121274602-3e2820c69888?auto=format&fit=crop&q=80&w=1200"
+      "/cars/Changan 75 Pro.png"
     ]
   },
   {
@@ -398,10 +391,9 @@ export const cars = [
     },
     price: 10500000,
     brand: "Changan",
-    image: "https://images.unsplash.com/photo-1583121274602-3e2820c69888?auto=format&fit=crop&q=80&w=1200",
+    image: "/cars/Changan 55 Pro.png",
     gallery: [
-      "https://images.unsplash.com/photo-1583121274602-3e2820c69888?auto=format&fit=crop&q=80&w=1200",
-      "https://images.unsplash.com/photo-1590362891175-37b036660662?auto=format&fit=crop&q=80&w=1200"
+      "/cars/Changan 55 Pro.png"
     ]
   },
   {
@@ -426,10 +418,9 @@ export const cars = [
     },
     price: 7900000,
     brand: "BYD",
-    image: "https://images.unsplash.com/photo-1590362891175-37b036660662?auto=format&fit=crop&q=80&w=1200",
+    image: "/cars/BYD 05 (Hybrid).png",
     gallery: [
-      "https://images.unsplash.com/photo-1590362891175-37b036660662?auto=format&fit=crop&q=80&w=1200",
-      "https://images.unsplash.com/photo-1619767886558-efdc259cde1a?auto=format&fit=crop&q=80&w=1200"
+      "/cars/BYD 05 (Hybrid).png"
     ]
   }
 ];

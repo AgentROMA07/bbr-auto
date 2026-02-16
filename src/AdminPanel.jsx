@@ -1,15 +1,15 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef } from 'react';
 import { useForm } from 'react-hook-form';
 import { translations, cars as initialCars } from './data';
-import {
-  LayoutDashboard,
-  Car,
-  Settings,
-  Plus,
-  Trash2,
-  Edit,
-  Save,
-  X,
+import { 
+  LayoutDashboard, 
+  Car, 
+  Settings, 
+  Plus, 
+  Trash2, 
+  Edit, 
+  Save, 
+  X, 
   LogOut,
   Image as ImageIcon,
   DollarSign,
@@ -19,8 +19,6 @@ import {
   Percent,
   Languages
 } from 'lucide-react';
-
-const API_URL = import.meta.env.VITE_API_URL || '';
 
 const AdminPanel = () => {
   const [activeTab, setActiveTab] = useState('cars');
@@ -34,7 +32,6 @@ const AdminPanel = () => {
   const [previewImages, setPreviewImages] = useState([]);
   const [lang, setLang] = useState(localStorage.getItem('lang') || 'kz');
   const [settingsLogo, setSettingsLogo] = useState(localStorage.getItem('logo') || null);
-  const [colorVariants, setColorVariants] = useState([]);
   const [whatsappNumber, setWhatsappNumber] = useState(localStorage.getItem('whatsappNumber') || '+7 707 123 45 67');
   const fileInputRef = useRef(null);
   const logoInputRef = useRef(null);
@@ -53,79 +50,6 @@ const AdminPanel = () => {
   };
 
   const { register, handleSubmit, reset } = useForm();
-
-  const syncCar = async (method, id, body) => {
-    try {
-      const url = id ? `${API_URL}/api/cars/${id}` : `${API_URL}/api/cars`;
-      const res = await fetch(url, {
-        method,
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: body ? JSON.stringify(body) : undefined,
-      });
-      if (!res.ok) {
-        return null;
-      }
-      if (res.status === 204) {
-        return null;
-      }
-      return await res.json();
-    } catch {
-      return null;
-    }
-  };
-
-  const syncSettings = async (payload) => {
-    try {
-      const res = await fetch(`${API_URL}/api/settings`, {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(payload),
-      });
-      if (!res.ok) {
-        return null;
-      }
-      return await res.json();
-    } catch {
-      return null;
-    }
-  };
-
-  useEffect(() => {
-    fetch(`${API_URL}/api/cars`)
-      .then((res) => (res.ok ? res.json() : null))
-      .then((data) => {
-        if (Array.isArray(data) && data.length > 0) {
-          setCars(data);
-          localStorage.setItem('cars', JSON.stringify(data));
-        }
-      })
-      .catch(() => {
-      });
-
-    fetch(`${API_URL}/api/settings`)
-      .then((res) => (res.ok ? res.json() : null))
-      .then((data) => {
-        if (!data || typeof data !== 'object') return;
-        if (Object.prototype.hasOwnProperty.call(data, 'logo')) {
-          setSettingsLogo(data.logo);
-          if (data.logo) {
-            localStorage.setItem('logo', data.logo);
-          }
-        }
-        if (Object.prototype.hasOwnProperty.call(data, 'whatsappNumber')) {
-          setWhatsappNumber(data.whatsappNumber);
-          if (data.whatsappNumber) {
-            localStorage.setItem('whatsappNumber', data.whatsappNumber);
-          }
-        }
-      })
-      .catch(() => {
-      });
-  }, []);
 
   const handleLogout = () => {
     localStorage.removeItem('isAuthenticated');
@@ -161,50 +85,7 @@ const AdminPanel = () => {
       localStorage.setItem('logo', settingsLogo);
     }
     localStorage.setItem('whatsappNumber', whatsappNumber);
-    syncSettings({
-      logo: settingsLogo,
-      whatsappNumber,
-    });
     alert(t.admin.save);
-  };
-
-  const addColorVariant = () => {
-    setColorVariants((prev) => [
-      ...prev,
-      {
-        id: Date.now(),
-        name: '',
-        hex: '#ffffff',
-        image: '',
-      },
-    ]);
-  };
-
-  const updateColorVariant = (id, field, value) => {
-    setColorVariants((prev) =>
-      prev.map((variant) =>
-        variant.id === id ? { ...variant, [field]: value } : variant
-      )
-    );
-  };
-
-  const removeColorVariant = (id) => {
-    setColorVariants((prev) => prev.filter((variant) => variant.id !== id));
-  };
-
-  const handleColorImage = (id, file) => {
-    if (file && file.type.startsWith('image/')) {
-      const reader = new FileReader();
-      reader.onload = (e) => {
-        const base64 = e.target.result;
-        setColorVariants((prev) =>
-          prev.map((variant) =>
-            variant.id === id ? { ...variant, image: base64 } : variant
-          )
-        );
-      };
-      reader.readAsDataURL(file);
-    }
   };
 
   const onDrag = (e) => {
@@ -229,11 +110,10 @@ const AdminPanel = () => {
   const deleteCar = (id) => {
     if (window.confirm(t.admin.confirm_delete)) {
       saveCars(cars.filter(c => c.id !== id));
-      syncCar('DELETE', id);
     }
   };
 
-  const onSubmit = async (data) => {
+  const onSubmit = (data) => {
     const financePayload = {
       installment: [
         { months: Number(data.inst_m1), price: Number(data.inst_p1) },
@@ -251,8 +131,7 @@ const AdminPanel = () => {
       price: Number(data.price),
       image: previewImages[0] || '',
       gallery: previewImages,
-      finance: financePayload,
-      colorVariants
+      finance: financePayload
     };
 
     const carData = isEdit ? baseUpdates : {
@@ -261,25 +140,18 @@ const AdminPanel = () => {
     };
 
     if (editingCar) {
-      const updatedCar = { ...editingCar, ...carData };
-      const payload = { ...updatedCar };
-      delete payload.id;
-      const serverCar = await syncCar('PUT', editingCar.id, payload);
-      const finalCar = serverCar || updatedCar;
-      saveCars(cars.map((c) => (c.id === editingCar.id ? finalCar : c)));
+      saveCars(cars.map(c => c.id === editingCar.id ? { ...c, ...carData } : c));
       setEditingCar(null);
     } else {
-      const payload = { ...carData };
-      const serverCar = await syncCar('POST', null, payload);
-      const createdCar = serverCar || {
+      const newId = (cars.length ? Math.max(...cars.map((c) => c.id || 0)) : 0) + 1;
+      const newCar = {
         ...carData,
-        id: (cars.length ? Math.max(...cars.map((c) => c.id || 0)) : 0) + 1,
+        id: newId,
       };
-      saveCars([createdCar, ...cars]);
+      saveCars([newCar, ...cars]);
       setIsAddingCar(false);
     }
     setPreviewImages([]);
-    setColorVariants([]);
     reset();
   };
 
@@ -287,7 +159,6 @@ const AdminPanel = () => {
     setEditingCar(car);
     setIsAddingCar(true);
     setPreviewImages(car.gallery || [car.image]);
-    setColorVariants(car.colorVariants || []);
     
     // Reset form with car data
     reset({
@@ -635,92 +506,6 @@ const AdminPanel = () => {
                           onChange={(e) => handleFiles(e.target.files)}
                         />
                       </div>
-                    </div>
-                  </div>
-
-                  <div className="pt-4 border-t border-white/5 space-y-4">
-                    <div className="flex items-center justify-between">
-                      <span className="text-[10px] font-bold text-white/40 uppercase tracking-widest">
-                        Цветовые варианты
-                      </span>
-                      <button
-                        type="button"
-                        onClick={addColorVariant}
-                        className="text-[10px] font-bold uppercase tracking-widest text-brand-gold hover:text-white transition-colors flex items-center gap-2"
-                      >
-                        <Plus size={14} />
-                        Добавить цвет
-                      </button>
-                    </div>
-
-                    <div className="space-y-4">
-                      {colorVariants.map((variant) => (
-                        <div
-                          key={variant.id}
-                          className="border border-white/10 rounded-2xl p-4 flex flex-col gap-3 bg-black/40"
-                        >
-                          <div className="flex items-center gap-3">
-                            <div
-                              className="w-6 h-6 rounded-full border border-white/10"
-                              style={{ backgroundColor: variant.hex || '#ffffff' }}
-                            />
-                            <input
-                              type="text"
-                              value={variant.name}
-                              onChange={(e) =>
-                                updateColorVariant(variant.id, 'name', e.target.value)
-                              }
-                              placeholder="Название цвета"
-                              className="flex-1 bg-transparent border border-white/10 rounded-xl px-3 py-2 text-xs focus:border-brand-gold outline-none transition-all"
-                            />
-                            <input
-                              type="color"
-                              value={variant.hex}
-                              onChange={(e) =>
-                                updateColorVariant(variant.id, 'hex', e.target.value)
-                              }
-                              className="w-10 h-10 rounded-full border border-white/10 bg-transparent cursor-pointer"
-                            />
-                            <button
-                              type="button"
-                              onClick={() => removeColorVariant(variant.id)}
-                              className="p-2 rounded-full bg-red-500/10 text-red-400 hover:bg-red-500/30 transition-colors"
-                            >
-                              <Trash2 size={14} />
-                            </button>
-                          </div>
-
-                          <div className="grid grid-cols-2 gap-3 items-center">
-                            <div className="text-[10px] text-white/40 uppercase tracking-widest">
-                              Превью автомобиля
-                            </div>
-                            <div className="flex items-center gap-3">
-                              <div className="w-20 h-12 rounded-xl overflow-hidden border border-white/10 bg-black flex items-center justify-center">
-                                {variant.image ? (
-                                  <img
-                                    src={variant.image}
-                                    alt={variant.name || 'color image'}
-                                    className="w-full h-full object-cover"
-                                  />
-                                ) : (
-                                  <ImageIcon className="text-white/20" size={18} />
-                                )}
-                              </div>
-                              <label className="text-[10px] font-bold uppercase tracking-widest px-3 py-2 border border-white/10 rounded-xl cursor-pointer hover:border-brand-gold hover:text-brand-gold transition-colors">
-                                Загрузить
-                                <input
-                                  type="file"
-                                  accept="image/*"
-                                  className="hidden"
-                                  onChange={(e) =>
-                                    handleColorImage(variant.id, e.target.files[0])
-                                  }
-                                />
-                              </label>
-                            </div>
-                          </div>
-                        </div>
-                      ))}
                     </div>
                   </div>
 
