@@ -209,7 +209,10 @@ async function saveCar(req, res) {
       sendJson(res, 200, { success: true, id: carId });
     } catch (err) {
       console.error(err);
-      sendJson(res, 500, { error: 'Internal Server Error' });
+      sendJson(res, 500, {
+        error: 'Internal Server Error',
+        detail: err.message || 'Unknown error',
+      });
     }
   });
 }
@@ -243,7 +246,9 @@ module.exports = async (req, res) => {
     }
   } catch (err) {
     console.error(err);
-    sendJson(res, 500, { error: 'Internal Server Error' });
+    sendJson(res, 500, {
+      error: 'Internal Server Error',
+      detail: err.message || 'Unknown error',
+    });
   }
 };
-

@@ -202,7 +202,19 @@ const AdminPanel = () => {
       });
 
       if (!res.ok) {
-        throw new Error('Failed to save');
+        let message = 'Қате / Ошибка сохранения авто';
+        const contentType = res.headers.get('Content-Type') || '';
+        if (contentType.includes('application/json')) {
+          try {
+            const errJson = await res.json();
+            if (errJson?.detail) {
+              message += `: ${errJson.detail}`;
+            }
+          } catch (parseError) {
+            console.error(parseError);
+          }
+        }
+        throw new Error(message);
       }
 
       const json = await res.json();
@@ -221,8 +233,8 @@ const AdminPanel = () => {
       setPreviewImages([]);
       setColorVariants([]);
       reset();
-    } catch {
-      alert('Қате / Ошибка сохранения авто');
+    } catch (err) {
+      alert(err.message || 'Қате / Ошибка сохранения авто');
     }
   };
 

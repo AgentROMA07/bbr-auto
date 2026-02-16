@@ -1,12 +1,33 @@
 const { Pool } = require('pg');
 
-const pool = new Pool({
-  connectionString: process.env.DATABASE_URL,
-  ssl: { rejectUnauthorized: false },
-});
+let pool;
+
+function getPool() {
+  if (pool) return pool;
+
+  const raw = process.env.DATABASE_URL;
+
+  if (!raw) {
+    throw new Error('DATABASE_URL is not set');
+  }
+
+  let connectionString = raw;
+
+  const match = raw.match(/(postgresql:\/\/.*)/);
+  if (match) {
+    connectionString = match[1].replace(/^'+|'+$/g, '');
+  }
+
+  pool = new Pool({
+    connectionString,
+    ssl: { rejectUnauthorized: false },
+  });
+
+  return pool;
+}
 
 async function ensureSchema() {
-  await pool.query(`
+  await getPool().query(`
     CREATE TABLE IF NOT EXISTS cars (
       id SERIAL PRIMARY KEY,
       brand TEXT NOT NULL,
@@ -51,10 +72,9 @@ async function ensureSchema() {
 
 async function query(text, params) {
   await ensureSchema();
-  return pool.query(text, params);
+  return getPool().query(text, params);
 }
 
 module.exports = {
   query,
 };
-
