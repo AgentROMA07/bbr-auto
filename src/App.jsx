@@ -65,7 +65,7 @@ const CarCard = ({ car, lang, t, onShowDetails, whatsappDigits }) => (
       <div className="p-6">
         <div className="mb-6">
           <h3 className="text-xl font-tech font-bold text-white mb-2 group-hover:translate-x-1 transition-transform">{car.model}</h3>
-          <div className="flex items-center justify-between gap-3 mb-3">
+            <div className="flex items-center gap-3 mb-3">
             <div className="flex flex-wrap gap-3">
             {[
               { label: '2024', icon: <Layers size={12} /> },
@@ -79,9 +79,13 @@ const CarCard = ({ car, lang, t, onShowDetails, whatsappDigits }) => (
             ))}
             </div>
             <div className="flex items-center gap-1">
-              <span className="w-3 h-3 rounded-full bg-white border border-white/30" />
-              <span className="w-3 h-3 rounded-full bg-black border border-white/30" />
-              <span className="w-3 h-3 rounded-full bg-neutral-500 border border-white/30" />
+              {(car.colors || ['#ffffff', '#000000', '#737373']).map((color, idx) => (
+                <span
+                  key={idx}
+                  className="w-3 h-3 rounded-full border border-white/30"
+                  style={{ backgroundColor: color }}
+                />
+              ))}
             </div>
           </div>
         </div>
@@ -109,6 +113,14 @@ const CarCard = ({ car, lang, t, onShowDetails, whatsappDigits }) => (
 
 const CarModal = ({ car, lang, t, onClose, whatsappDigits }) => {
   const [activeImg, setActiveImg] = useState(0);
+
+  const formatFinanceValue = (value) => {
+    if (!value) return "";
+    if (lang === "kz") {
+      return value.replace(/^От/i, "Бастап");
+    }
+    return value;
+  };
 
   return (
     <Motion.div 
@@ -202,64 +214,58 @@ const CarModal = ({ car, lang, t, onClose, whatsappDigits }) => {
             </div>
           </div>
 
-          <div className="bg-brand-gold/5 border border-brand-gold/10 p-4 md:p-6 rounded-2xl mb-8 md:mb-12">
+          <div className="bg-brand-gold/5 border border-brand-gold/10 p-4 md:p-6 rounded-2xl mb-4 md:mb-6">
             <p className="text-xs md:text-sm text-gray-300 leading-relaxed italic">{car.options[lang]}</p>
           </div>
 
-          {/* Finance Section */}
-          <div className="mb-8 md:mb-12 space-y-6 md:space-y-8">
-            {/* Installment Block */}
-            <div>
-              <h4 className="text-[8px] md:text-[10px] font-tech text-brand-gold uppercase tracking-[0.2em] mb-4 flex items-center gap-3">
-                <div className="h-[1px] flex-1 bg-brand-gold/20"></div>
-                {t.car.finance.installment.title}
-                <div className="h-[1px] flex-1 bg-brand-gold/20"></div>
-              </h4>
-              <div className="grid grid-cols-3 gap-2">
-                {(car.finance?.installment || [
-                  { months: 12, price: car.price },
-                  { months: 18, price: car.price },
-                  { months: 24, price: car.price }
-                ]).map((item, idx) => (
-                  <div key={idx} className="bg-white/5 border border-white/10 p-2 md:p-3 rounded-xl flex flex-col items-center justify-center text-center group hover:border-brand-gold/50 transition-all">
-                    <span className="text-[7px] md:text-[8px] text-white/40 uppercase mb-1 group-hover:text-brand-gold transition-colors">{item.months} {lang === 'kz' ? 'ай' : 'мес'}</span>
-                    <span className="text-[10px] md:text-xs font-bold text-white mb-0.5">
-                      {Math.round(item.price / item.months).toString().replace(/\B(?=(\d{3})+(?!\d))/g, " ")}
-                    </span>
-                    <span className="text-[6px] md:text-[7px] text-white/30 uppercase tracking-tighter">{t.car.finance.monthly}</span>
-                  </div>
+          {car.colors && car.colors.length > 0 && (
+            <div className="flex items-center gap-3 mb-6 md:mb-8">
+              <span className="text-[8px] md:text-[10px] font-tech text-gray-500 uppercase tracking-widest">
+                {lang === 'kz' ? 'Түстер' : 'Цвета'}
+              </span>
+              <div className="flex items-center gap-1.5">
+                {car.colors.map((color, idx) => (
+                  <span
+                    key={idx}
+                    className="w-3 h-3 md:w-3.5 md:h-3.5 rounded-full border border-white/30"
+                    style={{ backgroundColor: color }}
+                  />
                 ))}
               </div>
             </div>
+          )}
 
-            {/* Credit Block */}
-            <div>
-              <h4 className="text-[8px] md:text-[10px] font-tech text-white/40 uppercase tracking-[0.2em] mb-4 flex items-center gap-3">
-                <div className="h-[1px] flex-1 bg-white/5"></div>
-                {t.car.finance.credit.title}
-                <div className="h-[1px] flex-1 bg-white/5"></div>
-              </h4>
-              <div className="grid grid-cols-3 gap-2">
-                {(car.finance?.credit || [
-                  { months: 36, price: car.price },
-                  { months: 60, price: car.price },
-                  { months: 84, price: car.price }
-                ]).map((item, idx) => {
-                  const years = item.months / 12;
-                  // Simplified credit calculation: adding roughly 15% annual interest
-                  const totalWithInterest = item.price * (1 + (0.15 * years));
-                  return (
-                    <div key={idx} className="bg-white/5 border border-white/10 p-2 md:p-3 rounded-xl flex flex-col items-center justify-center text-center group hover:border-white/30 transition-all">
-                      <span className="text-[7px] md:text-[8px] text-white/40 uppercase mb-1 group-hover:text-white transition-colors">{item.months} {lang === 'kz' ? 'ай' : 'мес'}</span>
-                      <span className="text-[10px] md:text-xs font-bold text-white mb-0.5">
-                        {Math.round(totalWithInterest / item.months).toString().replace(/\B(?=(\d{3})+(?!\d))/g, " ")}
-                      </span>
-                      <span className="text-[6px] md:text-[7px] text-white/30 uppercase tracking-tighter">{t.car.finance.monthly}</span>
-                    </div>
-                  );
-                })}
+          {/* Finance Section */}
+          <div className="mb-8 md:mb-12 space-y-4 md:space-y-6">
+            {car.finance?.installment && (
+              <div>
+                <h4 className="text-[8px] md:text-[10px] font-tech text-brand-gold uppercase tracking-[0.2em] mb-3 flex items-center gap-3">
+                  <div className="h-[1px] flex-1 bg-brand-gold/20"></div>
+                  {t.car.finance.installment.title}
+                  <div className="h-[1px] flex-1 bg-brand-gold/20"></div>
+                </h4>
+                <div className="bg-white/5 border border-brand-gold/20 p-3 md:p-4 rounded-2xl flex items-center justify-center">
+                  <span className="text-xs md:text-sm font-tech font-bold text-white">
+                    {formatFinanceValue(car.finance.installment)}
+                  </span>
+                </div>
               </div>
-            </div>
+            )}
+
+            {car.finance?.credit && (
+              <div>
+                <h4 className="text-[8px] md:text-[10px] font-tech text-white/40 uppercase tracking-[0.2em] mb-3 flex items-center gap-3">
+                  <div className="h-[1px] flex-1 bg-white/5"></div>
+                  {t.car.finance.credit.title}
+                  <div className="h-[1px] flex-1 bg-white/5"></div>
+                </h4>
+                <div className="bg-white/5 border border-white/15 p-3 md:p-4 rounded-2xl flex items-center justify-center">
+                  <span className="text-xs md:text-sm font-tech font-bold text-white">
+                    {formatFinanceValue(car.finance.credit)}
+                  </span>
+                </div>
+              </div>
+            )}
           </div>
 
           <div className="flex items-center justify-between mb-8">

@@ -36,12 +36,10 @@ export const translations = {
       more: "Толығырақ",
       finance: {
         installment: {
-          title: "Бөліп төлеу 0%",
-          terms: ["12 ай", "18 ай", "24 ай"],
+          title: "Евразия банк • Рассрочка",
         },
         credit: {
-          title: "Кредит",
-          terms: ["3 жыл", "5 жыл", "7 жыл"],
+          title: "Евразия банк • Кредит",
         },
         monthly: "айына",
       }
@@ -152,12 +150,10 @@ export const translations = {
       more: "Подробнее",
       finance: {
         installment: {
-          title: "Рассрочка 0%",
-          terms: ["12 месяцев", "18 месяцев", "24 месяца"],
+          title: "Евразия банк • Рассрочка",
         },
         credit: {
-          title: "Кредит",
-          terms: ["3 года", "5 лет", "7 лет"],
+          title: "Евразия банк • Кредит",
         },
         monthly: "в месяц",
       }
@@ -255,6 +251,11 @@ export const cars = [
       kz: "Спорттық шанақ, панорама, круиз, Nappa былғарысы, LED-оптика."
     },
     price: 8000000,
+    finance: {
+      installment: "От 116 мың",
+      credit: "От 185–196 мың"
+    },
+    colors: ['#ffffff', '#000000', '#737373'],
     brand: "Changan",
     image: "/cars/Changan X5 Plus Pro.png",
     gallery: [
@@ -282,6 +283,10 @@ export const cars = [
       kz: "Pioneer музыкасы, 360° камералар, автоматты тежеу, видеорегистратор."
     },
     price: 9500000,
+    finance: {
+      installment: "От 135 мың",
+      credit: "От 222–232 мың"
+    },
     brand: "Changan",
     image: "/cars/changan_cs55_plus_1192830.jpg",
     gallery: [
@@ -309,6 +314,10 @@ export const cars = [
       kz: "4-ші буын, адаптивті круиз, әйнекке проекция, барлық орындарды жылыту."
     },
     price: 11200000,
+    finance: {
+      installment: "От 150 мың",
+      credit: "От 265–275 мың"
+    },
     brand: "Changan",
     image: "/cars/Changan 75 Plus (1.5).webp",
     gallery: [
@@ -336,6 +345,10 @@ export const cars = [
       kz: "Толық жетек, орындықтарды желдету, параметрлер жады, 14 динамик."
     },
     price: 13200000,
+    finance: {
+      installment: "От 170 мың",
+      credit: "От 315–327 мың"
+    },
     brand: "Changan",
     image: "/cars/Changan 75 Plus (2.0).jpg",
     gallery: [
@@ -363,6 +376,10 @@ export const cars = [
       kz: "7 орынды салон (3 қатар), багаждың электр жетегі, 2 аймақты климат."
     },
     price: 10500000,
+    finance: {
+      installment: "От 150 мың",
+      credit: "От 245–257 мың"
+    },
     brand: "Changan",
     image: "/cars/Changan 75 Pro.png",
     gallery: [
@@ -390,6 +407,10 @@ export const cars = [
       kz: "2026 жаңартуы: жақтаусыз тор, 12.3\" экран, қысқы пакет."
     },
     price: 10500000,
+    finance: {
+      installment: "От 145 мың",
+      credit: "От 245–257 мың"
+    },
     brand: "Changan",
     image: "/cars/Changan 55 Pro.png",
     gallery: [
@@ -417,6 +438,11 @@ export const cars = [
       kz: "Шығыны 3.8л/100км, жүріс қоры 1200 км, Blade Battery батареясы."
     },
     price: 7900000,
+    finance: {
+      installment: "От 111 мың",
+      credit: "От 185–193 мың"
+    },
+    colors: ['#ffffff', '#000000', '#737373', '#1d4ed8'],
     brand: "BYD",
     image: "/cars/BYD 05 (Hybrid).png",
     gallery: [
