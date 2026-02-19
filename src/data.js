@@ -490,8 +490,8 @@ export const cars = [
     },
     price: 13200000,
     finance: {
-      installment: "Бастап 185 мың",
-      credit: "Бастап 310–335 мың"
+      installment: "Бастап 160 мың",
+      credit: "Бастап 200–220 мың"
     },
     colors: ['#ffffff', '#000000', '#737373'],
     brand: "Deepal",
