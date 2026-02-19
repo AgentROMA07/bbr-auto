@@ -89,22 +89,29 @@ const CarCard = ({ car, lang, t, onShowDetails, whatsappDigits }) => {
                   </div>
                 ))}
               </div>
-              <div className="flex items-center gap-1">
-                {colors.map((color, idx) => {
-                  const isActive = color === activeColor;
-                  return (
-                    <button
-                      key={idx}
-                      type="button"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        setActiveColor(color);
-                      }}
-                      className={`w-3.5 h-3.5 rounded-full border transition-all duration-300 ${isActive ? 'border-brand-gold scale-110' : 'border-white/40 opacity-80 hover:opacity-100'}`}
-                      style={{ backgroundColor: color }}
-                    />
-                  );
-                })}
+              <div className="flex items-center">
+                <div className="inline-flex items-center gap-2 bg-brand-gold/10 border border-brand-gold/25 rounded-full px-3 py-1.5">
+                  <span className="text-[8px] font-tech uppercase tracking-[0.2em] text-brand-gold">
+                    {lang === 'kz' ? 'Түстер' : 'Цвета'}
+                  </span>
+                  <div className="flex items-center gap-1.5">
+                    {colors.map((color, idx) => {
+                      const isActive = color === activeColor;
+                      return (
+                        <button
+                          key={idx}
+                          type="button"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            setActiveColor(color);
+                          }}
+                          className={`w-3.5 h-3.5 rounded-full border transition-all duration-300 ${isActive ? 'border-brand-gold scale-110' : 'border-white/40 opacity-80 hover:opacity-100'}`}
+                          style={{ backgroundColor: color }}
+                        />
+                      );
+                    })}
+                  </div>
+                </div>
               </div>
             </div>
           </div>
@@ -239,18 +246,20 @@ const CarModal = ({ car, lang, t, onClose, whatsappDigits }) => {
           </div>
 
           {car.colors && car.colors.length > 0 && (
-            <div className="flex items-center gap-3 mb-6 md:mb-8">
-              <span className="text-[8px] md:text-[10px] font-tech text-gray-500 uppercase tracking-widest">
-                {lang === 'kz' ? 'Түстер' : 'Цвета'}
-              </span>
-              <div className="flex items-center gap-1.5">
-                {car.colors.map((color, idx) => (
-                  <span
-                    key={idx}
-                    className="w-3 h-3 md:w-3.5 md:h-3.5 rounded-full border border-white/30"
-                    style={{ backgroundColor: color }}
-                  />
-                ))}
+            <div className="mb-6 md:mb-8">
+              <div className="inline-flex items-center gap-2 bg-brand-gold/10 border border-brand-gold/25 rounded-full px-3 md:px-4 py-1.5">
+                <span className="text-[8px] md:text-[10px] font-tech uppercase tracking-[0.2em] text-brand-gold">
+                  {lang === 'kz' ? 'Түстер' : 'Цвета'}
+                </span>
+                <div className="flex items-center gap-1.5">
+                  {car.colors.map((color, idx) => (
+                    <span
+                      key={idx}
+                      className="w-3 h-3 md:w-3.5 md:h-3.5 rounded-full border border-white/30"
+                      style={{ backgroundColor: color }}
+                    />
+                  ))}
+                </div>
               </div>
             </div>
           )}
