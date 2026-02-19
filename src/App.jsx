@@ -33,112 +33,86 @@ const TechBadge = ({ children, variant = 'gold' }) => {
   );
 };
 
-const CarCard = ({ car, lang, t, onShowDetails, whatsappDigits }) => {
-  const colors = (car.colors && car.colors.length ? car.colors : ['#ffffff', '#000000', '#737373']).slice(0, 3);
-  const [activeColor, setActiveColor] = useState(colors[0]);
-  const images = (car.gallery && car.gallery.length ? car.gallery : [car.image]).slice(0, colors.length);
-
-  const getImageForColor = () => {
-    const index = colors.indexOf(activeColor);
-    const safeIndex = index === -1 ? 0 : index;
-    return images[safeIndex] || images[0];
-  };
-
-  return (
-    <Motion.div 
-      initial={{ opacity: 0, y: 30 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true, margin: "-50px" }}
-      whileHover={{ y: -10 }}
-      className="group relative"
-    >
-      <div className="relative bg-[#0a0a0a] border border-white/5 rounded-3xl overflow-hidden backdrop-blur-xl shadow-2xl transition-all duration-500 group-hover:border-brand-gold/30">
-        <div className="relative aspect-[16/10] overflow-hidden">
-          <img 
-            src={getImageForColor()} 
-            alt={car.model} 
-            className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
-          />
-          <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent opacity-80" />
-          <div className="absolute top-4 left-4">
-            <TechBadge variant="gold">{car.brand}</TechBadge>
-          </div>
-          <div className="absolute bottom-4 left-4">
-            <div className="flex items-baseline gap-1">
-              <span className="text-2xl font-bold text-white tracking-tight group-hover:text-brand-gold transition-colors">
-                {car.price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, " ")}
-              </span>
-              <span className="text-xl font-bold text-brand-gold"> ₸</span>
-            </div>
-          </div>
+const CarCard = ({ car, lang, t, onShowDetails, whatsappDigits }) => (
+  <Motion.div 
+    initial={{ opacity: 0, y: 30 }}
+    whileInView={{ opacity: 1, y: 0 }}
+    viewport={{ once: true, margin: "-50px" }}
+    whileHover={{ y: -10 }}
+    className="group relative"
+  >
+    <div className="relative bg-[#0a0a0a] border border-white/5 rounded-3xl overflow-hidden backdrop-blur-xl shadow-2xl transition-all duration-500 group-hover:border-brand-gold/30">
+      <div className="relative aspect-[16/10] overflow-hidden">
+        <img 
+          src={car.image} 
+          alt={car.model} 
+          className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+        />
+        <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent opacity-80" />
+        <div className="absolute top-4 left-4">
+          <TechBadge variant="gold">{car.brand}</TechBadge>
         </div>
-        
-        <div className="p-6">
-          <div className="mb-6 space-y-4">
-            <h3 className="text-xl font-tech font-bold text-white mb-2 group-hover:translate-x-1 transition-transform">{car.model}</h3>
-            <div className="flex items-center gap-3">
-              <div className="flex flex-wrap gap-3">
-                {[
-                  { label: '2024', icon: <Layers size={12} /> },
-                  { label: car.engine[lang].split(' ')[0], icon: <Cpu size={12} /> },
-                  { label: 'NEW', icon: <Activity size={12} /> }
-                ].map((tag, i) => (
-                  <div key={i} className="flex items-center gap-1.5 text-[10px] text-white/40 font-tech uppercase tracking-widest bg-white/5 px-2 py-1 rounded-md">
-                    <span className="text-brand-gold/60">{tag.icon}</span>
-                    {tag.label}
-                  </div>
-                ))}
-              </div>
-            </div>
-            <div className="inline-flex items-center gap-2 px-3 py-2 rounded-full bg-brand-gold/15 border border-brand-gold/40">
-              <span className="text-[8px] font-tech font-bold uppercase tracking-widest text-brand-gold">
-                {lang === 'kz' ? 'Түстер' : 'Цвета'}
-              </span>
-              <div className="flex items-center gap-1.5">
-                {colors.map((color, idx) => {
-                  const isActive = color === activeColor;
-                  return (
-                    <button
-                      key={idx}
-                      type="button"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        setActiveColor(color);
-                      }}
-                      className={`w-3.5 h-3.5 rounded-full border transition-all duration-300 ${isActive ? 'border-brand-gold scale-110' : 'border-white/40 opacity-80 hover:opacity-100'}`}
-                      style={{ backgroundColor: color }}
-                    />
-                  );
-                })}
-              </div>
-            </div>
-          </div>
-
-          <div className="flex gap-3">
-            <button 
-              onClick={() => onShowDetails(car)}
-              className="flex-1 py-4 bg-white/5 border border-white/10 rounded-2xl font-tech font-bold text-[10px] uppercase tracking-[0.2em] text-white hover:bg-brand-gold hover:text-black hover:border-brand-gold transition-all duration-500"
-            >
-              {t.car.more}
-            </button>
-            <a 
-              href={`https://wa.me/${whatsappDigits}?text=Здравствуйте! Меня интересует ${car.model}`}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="w-14 h-14 flex items-center justify-center rounded-2xl bg-[#25D366] text-white hover:scale-110 hover:shadow-[0_0_20px_rgba(37,211,102,0.4)] transition-all duration-500 shadow-lg"
-            >
-              <MessageCircle size={24} fill="currentColor" />
-            </a>
+        <div className="absolute bottom-4 left-4">
+          <div className="flex items-baseline gap-1">
+            <span className="text-2xl font-bold text-white tracking-tight group-hover:text-brand-gold transition-colors">
+              {car.price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, " ")}
+            </span>
+            <span className="text-xl font-bold text-brand-gold"> ₸</span>
           </div>
         </div>
       </div>
-    </Motion.div>
-  );
-};
+      
+      <div className="p-6">
+        <div className="mb-6">
+          <h3 className="text-xl font-tech font-bold text-white mb-2 group-hover:translate-x-1 transition-transform">{car.model}</h3>
+            <div className="flex items-center gap-3 mb-3">
+            <div className="flex flex-wrap gap-3">
+            {[
+              { label: '2025', icon: <Layers size={12} /> },
+              { label: car.engine[lang].split(' ')[0], icon: <Cpu size={12} /> },
+              { label: 'NEW', icon: <Activity size={12} /> }
+            ].map((tag, i) => (
+              <div key={i} className="flex items-center gap-1.5 text-[10px] text-white/40 font-tech uppercase tracking-widest bg-white/5 px-2 py-1 rounded-md">
+                <span className="text-brand-gold/60">{tag.icon}</span>
+                {tag.label}
+              </div>
+            ))}
+            </div>
+            <div className="flex items-center gap-1">
+              {(car.colors || ['#ffffff', '#000000', '#737373']).map((color, idx) => (
+                <span
+                  key={idx}
+                  className="w-3 h-3 rounded-full border border-white/30"
+                  style={{ backgroundColor: color }}
+                />
+              ))}
+            </div>
+          </div>
+        </div>
+
+        <div className="flex gap-3">
+          <button 
+            onClick={() => onShowDetails(car)}
+            className="flex-1 py-4 bg-white/5 border border-white/10 rounded-2xl font-tech font-bold text-[10px] uppercase tracking-[0.2em] text-white hover:bg-brand-gold hover:text-black hover:border-brand-gold transition-all duration-500"
+          >
+            {t.car.more}
+          </button>
+          <a 
+            href={`https://wa.me/${whatsappDigits}?text=Здравствуйте! Меня интересует ${car.model}`}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="w-14 h-14 flex items-center justify-center rounded-2xl bg-[#25D366] text-white hover:scale-110 hover:shadow-[0_0_20px_rgba(37,211,102,0.4)] transition-all duration-500 shadow-lg"
+          >
+            <MessageCircle size={24} fill="currentColor" />
+          </a>
+        </div>
+      </div>
+    </div>
+  </Motion.div>
+);
 
 const CarModal = ({ car, lang, t, onClose, whatsappDigits }) => {
   const [activeImg, setActiveImg] = useState(0);
-  const colors = (car.colors && car.colors.length ? car.colors : ['#ffffff', '#000000', '#737373']).slice(0, 3);
 
   const formatFinanceValue = (value) => {
     if (!value) return "";
@@ -180,7 +154,7 @@ const CarModal = ({ car, lang, t, onClose, whatsappDigits }) => {
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 exit={{ opacity: 0 }}
-                transition={{ duration: 0.18 }}
+                transition={{ duration: 0.5 }}
                 className="w-full h-full object-cover"
               />
             </AnimatePresence>
@@ -244,25 +218,19 @@ const CarModal = ({ car, lang, t, onClose, whatsappDigits }) => {
             <p className="text-xs md:text-sm text-gray-300 leading-relaxed italic">{car.options[lang]}</p>
           </div>
 
-          {colors.length > 0 && (
-            <div className="mb-6 md:mb-8">
-              <div className="inline-flex items-center gap-2 px-3 py-2 rounded-full bg-brand-gold/15 border border-brand-gold/40">
-                <span className="text-[8px] md:text-[10px] font-tech font-bold uppercase tracking-widest text-brand-gold">
-                  {lang === 'kz' ? 'Түстер' : 'Цвета'}
-                </span>
-                <div className="flex items-center gap-1.5">
-                  {colors.map((color, idx) => (
-                    <button
-                      key={idx}
-                      type="button"
-                      onClick={() => setActiveImg(idx)}
-                      className={`w-3.5 h-3.5 md:w-4 md:h-4 rounded-full border transition-all duration-300 ${
-                        idx === activeImg ? 'border-brand-gold scale-110' : 'border-white/40 opacity-80 hover:opacity-100'
-                      }`}
-                      style={{ backgroundColor: color }}
-                    />
-                  ))}
-                </div>
+          {car.colors && car.colors.length > 0 && (
+            <div className="flex items-center gap-3 mb-6 md:mb-8">
+              <span className="text-[8px] md:text-[10px] font-tech text-gray-500 uppercase tracking-widest">
+                {lang === 'kz' ? 'Түстер' : 'Цвета'}
+              </span>
+              <div className="flex items-center gap-1.5">
+                {car.colors.map((color, idx) => (
+                  <span
+                    key={idx}
+                    className="w-3 h-3 md:w-3.5 md:h-3.5 rounded-full border border-white/30"
+                    style={{ backgroundColor: color }}
+                  />
+                ))}
               </div>
             </div>
           )}
