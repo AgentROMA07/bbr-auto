@@ -27,10 +27,10 @@ export const translations = {
       all: "Барлығы",
     },
     car: {
-      engine: "Қозғалтқыш.sys",
-      drive: "Жетек.exe",
-      dim: "Өлшемдер.cfg",
-      security: "Қауіпсіздік.lvl",
+      engine: "Қозғалтқыш",
+      drive: "Жетек",
+      dim: "Өлшемдер",
+      security: "Қауіпсіздік",
       value: "Құны",
       million: "₸",
       more: "Толығырақ",
@@ -141,10 +141,10 @@ export const translations = {
       all: "Все",
     },
     car: {
-      engine: "Двигатель.sys",
-      drive: "Привод.exe",
-      dim: "Габариты.cfg",
-      security: "Безопасность.lvl",
+      engine: "Двигатель",
+      drive: "Привод",
+      dim: "Габариты",
+      security: "Безопасность",
       value: "Стоимость",
       million: "₸",
       more: "Подробнее",
@@ -472,21 +472,21 @@ export const cars = [
     id: 8,
     model: "Deepal S07",
     engine: {
-      ru: "1.5 Plug-in Hybrid (238 л.с.) / 175 кВт электромотор",
-      kz: "1.5 Plug-in Hybrid (238 а.к.) / 175 кВт электромотор"
+      ru: "1.5 Plug-in (238 л.с.)",
+      kz: "1.5 Plug-in (238 а.к.)"
     },
     transmission: {
-      ru: "RWD (задний привод) / редуктор",
-      kz: "Артқы жетек (RWD) / редуктор"
+      ru: "RWD / редуктор",
+      kz: "RWD / редуктор"
     },
-    dimensions: "4750 × 1930 × 1625 мм",
+    dimensions: "4750×1930×1625",
     clearance: {
-      ru: "165 мм, ADAS интеллектуальная система (Huawei Qiankun Smart Driving ADS SE)",
-      kz: "Клиренс: 165 мм, ADAS интеллектуалды жүйесі (Huawei Qiankun Smart Driving ADS SE)"
+      ru: "165 мм",
+      kz: "165 мм"
     },
     options: {
-      ru: "Средний расход 4.9л/100км, комбинированный запас хода до 1200 км, батарея CATL (LFP).",
-      kz: "Орташа шығыны 4.9л/100км, аралас жүріс қоры 1200 км-ге дейін, CATL батареясы (LFP)."
+      ru: "Расход 4.9 л/100км, ход 1200 км, CATL (LFP).",
+      kz: "Шығын 4.9 л/100км, жүріс 1200 км, CATL (LFP)."
     },
     price: 13200000,
     finance: {
