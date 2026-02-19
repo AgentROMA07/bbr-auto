@@ -261,7 +261,7 @@ export const cars = [
     gallery: [
       "/cars/Changan X5 Plus Pro белый.png",
       "/cars/Changan X5 Plus Pro чёрный.png",
-      "/cars/Changan X5 Plus Pro чёрный.png"
+      "/cars/Changan X5 Plus Pro тёмно серый.png"
     ]
   },
   {
@@ -295,7 +295,7 @@ export const cars = [
     gallery: [
       "/cars/Changan 55 Plus белый.png",
       "/cars/Changan 55 Plus чёрный.png",
-      "/cars/Changan 55 Plus чёрный.png"
+      "/cars/Changan 55 Plus тёмно серый.png"
     ]
   },
   {
@@ -329,7 +329,7 @@ export const cars = [
     gallery: [
       "/cars/Changan 75 Plus (2.0) белый.png",
       "/cars/Changan 75 Plus (2.0) чёрный.png",
-      "/cars/Changan 75 Plus (2.0) чёрный.png"
+      "/cars/Changan 75 Plus (2.0) тёмно серый.png"
     ]
   },
   {
@@ -363,7 +363,7 @@ export const cars = [
     gallery: [
       "/cars/Changan 75 Plus (2.0) белый.png",
       "/cars/Changan 75 Plus (2.0) чёрный.png",
-      "/cars/Changan 75 Plus (2.0) серый.png"
+      "/cars/Changan 75 Plus (2.0) тёмно серый.png"
     ]
   },
   {
@@ -397,7 +397,7 @@ export const cars = [
     gallery: [
       "/cars/Changan 75 Pro белый.png",
       "/cars/Changan 75 Pro чёрный.png",
-      "/cars/Changan 75 Pro чёрный.png"
+      "/cars/Changan 75 Pro тёмно серый.png"
     ]
   },
   {
@@ -431,7 +431,7 @@ export const cars = [
     gallery: [
       "/cars/Changan 55 Pro белый.png",
       "/cars/Changan 55 Pro чёрный.png",
-      "/cars/Changan 55 Pro чёрный.png"
+      "/cars/Changan 55 Pro тёмно серый.png"
     ]
   },
   {
@@ -465,7 +465,7 @@ export const cars = [
     gallery: [
       "/cars/BYD 05 (Hybrid) белый.png",
       "/cars/BYD 05 (Hybrid) чёрный.png",
-      "/cars/BYD 05 (Hybrid) чёрный.png"
+      "/cars/BYD 05 (Hybrid) тёмно серый.png"
     ]
   },
   {
@@ -493,13 +493,13 @@ export const cars = [
       installment: "Бастап 160 мың",
       credit: "Бастап 200–220 мың"
     },
-    colors: ['#ffffff', '#000000', '#737373'],
+    colors: ['#ffffff', '#000000', '#4b4b4b'],
     brand: "Deepal",
     image: "/cars/Deepal S07 белый.png",
     gallery: [
       "/cars/Deepal S07 белый.png",
       "/cars/Deepal S07 чёрный.png",
-      "/cars/Deepal S07 чёрный.png"
+      "/cars/Deepal S07 тёмно серый.png"
     ]
   }
 ];
