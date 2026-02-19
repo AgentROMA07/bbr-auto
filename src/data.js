@@ -255,11 +255,13 @@ export const cars = [
       installment: "От 116 мың",
       credit: "От 185–196 мың"
     },
-    colors: ['#ffffff', '#000000', '#737373'],
     brand: "Changan",
-    image: "/cars/Changan X5 Plus Pro.png",
+    colors: ['#ffffff', '#000000', '#737373'],
+    image: "/cars/Changan X5 Plus Pro белый.png",
     gallery: [
-      "/cars/Changan X5 Plus Pro.png"
+      "/cars/Changan X5 Plus Pro белый.png",
+      "/cars/Changan X5 Plus Pro чёрный.png",
+      "/cars/Changan X5 Plus Pro серый.png"
     ]
   },
   {
@@ -288,9 +290,12 @@ export const cars = [
       credit: "От 222–232 мың"
     },
     brand: "Changan",
-    image: "/cars/changan_cs55_plus_1192830.jpg",
+    colors: ['#ffffff', '#000000', '#737373'],
+    image: "/cars/Changan 55 Plus белый.png",
     gallery: [
-      "/cars/changan_cs55_plus_1192830.jpg"
+      "/cars/Changan 55 Plus белый.png",
+      "/cars/Changan 55 Plus чёрный.png",
+      "/cars/Changan 55 Plus серый.png"
     ]
   },
   {
@@ -319,9 +324,12 @@ export const cars = [
       credit: "От 265–275 мың"
     },
     brand: "Changan",
-    image: "/cars/Changan 75 Plus (1.5).webp",
+    colors: ['#ffffff', '#000000', '#737373'],
+    image: "/cars/Changan 75 Plus (1.5) белый.png",
     gallery: [
-      "/cars/Changan 75 Plus (1.5).webp"
+      "/cars/Changan 75 Plus (1.5) белый.png",
+      "/cars/Changan 75 Plus (1.5) чёрный.png",
+      "/cars/Changan 75 Plus (1.5) серый.webp"
     ]
   },
   {
@@ -350,9 +358,12 @@ export const cars = [
       credit: "От 315–327 мың"
     },
     brand: "Changan",
-    image: "/cars/Changan 75 Plus (2.0).jpg",
+    colors: ['#ffffff', '#000000', '#737373'],
+    image: "/cars/Changan 75 Plus (2.0) белый.png",
     gallery: [
-      "/cars/Changan 75 Plus (2.0).jpg"
+      "/cars/Changan 75 Plus (2.0) белый.png",
+      "/cars/Changan 75 Plus (2.0) чёрный.png",
+      "/cars/Changan 75 Plus (2.0) серый.png"
     ]
   },
   {
@@ -381,9 +392,12 @@ export const cars = [
       credit: "От 245–257 мың"
     },
     brand: "Changan",
-    image: "/cars/Changan 75 Pro.png",
+    colors: ['#ffffff', '#000000', '#737373'],
+    image: "/cars/Changan 75 Pro белый.png",
     gallery: [
-      "/cars/Changan 75 Pro.png"
+      "/cars/Changan 75 Pro белый.png",
+      "/cars/Changan 75 Pro чёрный.png",
+      "/cars/Changan 75 Pro серый.png"
     ]
   },
   {
@@ -412,9 +426,12 @@ export const cars = [
       credit: "От 245–257 мың"
     },
     brand: "Changan",
-    image: "/cars/Changan 55 Pro.png",
+    colors: ['#ffffff', '#000000', '#737373'],
+    image: "/cars/Changan 55 Pro белый.png",
     gallery: [
-      "/cars/Changan 55 Pro.png"
+      "/cars/Changan 55 Pro белый.png",
+      "/cars/Changan 55 Pro чёрный.png",
+      "/cars/Changan 55 Pro серый.png"
     ]
   },
   {
@@ -442,11 +459,47 @@ export const cars = [
       installment: "От 111 мың",
       credit: "От 185–193 мың"
     },
-    colors: ['#ffffff', '#000000', '#737373', '#1d4ed8'],
+    colors: ['#ffffff', '#000000', '#737373'],
     brand: "BYD",
-    image: "/cars/BYD 05 (Hybrid).png",
+    image: "/cars/BYD 05 (Hybrid) белый.png",
     gallery: [
-      "/cars/BYD 05 (Hybrid).png"
+      "/cars/BYD 05 (Hybrid) белый.png",
+      "/cars/BYD 05 (Hybrid) чёрный.png",
+      "/cars/BYD 05 (Hybrid) серый.png"
+    ]
+  },
+  {
+    id: 8,
+    model: "Deepal S07",
+    engine: {
+      ru: "1.5 Plug-in Hybrid (238 л.с.) / 175 кВт электромотор",
+      kz: "1.5 Plug-in Hybrid (238 а.к.) / 175 кВт электромотор"
+    },
+    transmission: {
+      ru: "RWD (задний привод) / редуктор",
+      kz: "Артқы жетек (RWD) / редуктор"
+    },
+    dimensions: "4750 × 1930 × 1625 мм",
+    clearance: {
+      ru: "165 мм, ADAS интеллектуальная система (Huawei Qiankun Smart Driving ADS SE)",
+      kz: "Клиренс: 165 мм, ADAS интеллектуалды жүйесі (Huawei Qiankun Smart Driving ADS SE)"
+    },
+    options: {
+      ru: "Средний расход 4.9л/100км, комбинированный запас хода до 1200 км, батарея CATL (LFP).",
+      kz: "Орташа шығыны 4.9л/100км, аралас жүріс қоры 1200 км-ге дейін, CATL батареясы (LFP)."
+    },
+    price: 13200000,
+    finance: {
+      installment: "Бастап 185 мың",
+      credit: "Бастап 310–335 мың"
+    },
+    colors: ['#ffffff', '#000000', '#737373'],
+    brand: "Deepal",
+    image: "/cars/Deepal S07 белый.png",
+    gallery: [
+      "/cars/Deepal S07 белый.png",
+      "/cars/Deepal S07 чёрный.png",
+      "/cars/Deepal S07 серый.png"
     ]
   }
 ];
