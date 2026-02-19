@@ -256,12 +256,12 @@ export const cars = [
       credit: "От 185–196 мың"
     },
     brand: "Changan",
-    colors: ['#ffffff', '#000000', '#737373'],
+    colors: ['#ffffff', '#000000', '#4b4b4b'],
     image: "/cars/Changan X5 Plus Pro белый.png",
     gallery: [
       "/cars/Changan X5 Plus Pro белый.png",
       "/cars/Changan X5 Plus Pro чёрный.png",
-      "/cars/Changan X5 Plus Pro серый.png"
+      "/cars/Changan X5 Plus Pro чёрный.png"
     ]
   },
   {
@@ -290,12 +290,12 @@ export const cars = [
       credit: "От 222–232 мың"
     },
     brand: "Changan",
-    colors: ['#ffffff', '#000000', '#737373'],
+    colors: ['#ffffff', '#000000', '#4b4b4b'],
     image: "/cars/Changan 55 Plus белый.png",
     gallery: [
       "/cars/Changan 55 Plus белый.png",
       "/cars/Changan 55 Plus чёрный.png",
-      "/cars/Changan 55 Plus серый.png"
+      "/cars/Changan 55 Plus чёрный.png"
     ]
   },
   {
@@ -324,12 +324,12 @@ export const cars = [
       credit: "От 265–275 мың"
     },
     brand: "Changan",
-    colors: ['#ffffff', '#000000', '#737373'],
-    image: "/cars/Changan 75 Plus (1.5) белый.png",
+    colors: ['#ffffff', '#000000', '#4b4b4b'],
+    image: "/cars/Changan 75 Plus (2.0) белый.png",
     gallery: [
-      "/cars/Changan 75 Plus (1.5) белый.png",
-      "/cars/Changan 75 Plus (1.5) чёрный.png",
-      "/cars/Changan 75 Plus (1.5) серый.webp"
+      "/cars/Changan 75 Plus (2.0) белый.png",
+      "/cars/Changan 75 Plus (2.0) чёрный.png",
+      "/cars/Changan 75 Plus (2.0) чёрный.png"
     ]
   },
   {
@@ -358,7 +358,7 @@ export const cars = [
       credit: "От 315–327 мың"
     },
     brand: "Changan",
-    colors: ['#ffffff', '#000000', '#737373'],
+    colors: ['#ffffff', '#000000', '#4b4b4b'],
     image: "/cars/Changan 75 Plus (2.0) белый.png",
     gallery: [
       "/cars/Changan 75 Plus (2.0) белый.png",
@@ -392,12 +392,12 @@ export const cars = [
       credit: "От 245–257 мың"
     },
     brand: "Changan",
-    colors: ['#ffffff', '#000000', '#737373'],
+    colors: ['#ffffff', '#000000', '#4b4b4b'],
     image: "/cars/Changan 75 Pro белый.png",
     gallery: [
       "/cars/Changan 75 Pro белый.png",
       "/cars/Changan 75 Pro чёрный.png",
-      "/cars/Changan 75 Pro серый.png"
+      "/cars/Changan 75 Pro чёрный.png"
     ]
   },
   {
@@ -426,12 +426,12 @@ export const cars = [
       credit: "От 245–257 мың"
     },
     brand: "Changan",
-    colors: ['#ffffff', '#000000', '#737373'],
+    colors: ['#ffffff', '#000000', '#4b4b4b'],
     image: "/cars/Changan 55 Pro белый.png",
     gallery: [
       "/cars/Changan 55 Pro белый.png",
       "/cars/Changan 55 Pro чёрный.png",
-      "/cars/Changan 55 Pro серый.png"
+      "/cars/Changan 55 Pro чёрный.png"
     ]
   },
   {
@@ -459,13 +459,13 @@ export const cars = [
       installment: "От 111 мың",
       credit: "От 185–193 мың"
     },
-    colors: ['#ffffff', '#000000', '#737373'],
+    colors: ['#ffffff', '#000000', '#4b4b4b'],
     brand: "BYD",
     image: "/cars/BYD 05 (Hybrid) белый.png",
     gallery: [
       "/cars/BYD 05 (Hybrid) белый.png",
       "/cars/BYD 05 (Hybrid) чёрный.png",
-      "/cars/BYD 05 (Hybrid) серый.png"
+      "/cars/BYD 05 (Hybrid) чёрный.png"
     ]
   },
   {
@@ -499,7 +499,7 @@ export const cars = [
     gallery: [
       "/cars/Deepal S07 белый.png",
       "/cars/Deepal S07 чёрный.png",
-      "/cars/Deepal S07 серый.png"
+      "/cars/Deepal S07 чёрный.png"
     ]
   }
 ];
