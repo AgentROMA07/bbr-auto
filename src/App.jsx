@@ -79,7 +79,7 @@ const CarCard = ({ car, lang, t, onShowDetails, whatsappDigits }) => {
             <div className="flex items-center gap-3 mb-3">
               <div className="flex flex-wrap gap-3">
                 {[
-                  { label: '2025', icon: <Layers size={12} /> },
+                  { label: '2026', icon: <Layers size={12} /> },
                   { label: car.engine[lang].split(' ')[0], icon: <Cpu size={12} /> },
                   { label: 'NEW', icon: <Activity size={12} /> }
                 ].map((tag, i) => (
